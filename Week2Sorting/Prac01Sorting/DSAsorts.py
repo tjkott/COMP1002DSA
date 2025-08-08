@@ -39,7 +39,6 @@ def insertionSort(A):
         # place the current_element in its correct position. 
         A[position] = current_element 
 
-
 def selectionSort(A):
     """
     During each pass, select the smallest item from unsorted array and swap with the first item (i.e. sorted position).
@@ -59,7 +58,7 @@ def selectionSort(A):
 
 def mergeSort(A):
     """ 
-    mergeSort - front-end for kick-starting the recursive algorithm
+    mergeSort - front-end for kick-starting the recursive algorithm. 
     """
     ...
 
