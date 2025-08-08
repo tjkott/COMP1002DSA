@@ -21,7 +21,7 @@ import DSAsorts
 import random
 
 
-REPEATS = 3           #No times to run sorts to get mean time
+REPEATS = 100           #No times to run sorts to get mean time
 NEARLY_PERCENT = 0.10 #% of items to move in nearly sorted array
 RANDOM_TIMES = 100    #No times to randomly swap elements in array
 
