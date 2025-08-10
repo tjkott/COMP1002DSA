@@ -26,7 +26,7 @@ def towers(n, src, dest):
     if not (1<= src <= 3 and 1 <= dest <= 3 and src != dest):
         raise InvalidInputError("Pegs must be 1, 2 or 3, and source cannot be the destination.")
 
-    # Nested function to avoid input validation running > once.
+    # Nested function to avoid input validation running more than once.
     def hanoiAlgorithm(number_of_disks, source, destination, level):
         if number_of_disks == 1:
             moveDisk(1, source, destination, level, 1)
