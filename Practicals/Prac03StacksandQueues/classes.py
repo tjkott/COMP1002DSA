@@ -24,7 +24,6 @@ class DSAStack:
         """Checks if stack is full."""
         return self.count == len(self.stack)
     
-    
    # MUTATORS
     def push(self, value):
         """ Adds an item to the top of the stack.
@@ -111,7 +110,7 @@ class DSAQueue:
         return frontVal
 
 if __name__ == '__main__':
-    print("--- Testing DSAStack (following pseudocode) ---")
+    print("--- Testing DSAStack ---")
     # Using alternate constructor
     stack = DSAStack()
     print(f"Is stack empty? {stack.isEmpty()}")
@@ -121,7 +120,7 @@ if __name__ == '__main__':
     stack.push("hello")
     stack.push(3.14)
 
-    print(f"Stack count: {stack.getCount()}")
+    print(f"Stack count: {stack.get_count()}")
     print(f"Is stack full? {stack.isFull()}")
     print(f"Top item: {stack.top()}")
 
@@ -129,7 +128,7 @@ if __name__ == '__main__':
     popped_item = stack.pop()
     print(f"Popped: {popped_item}")
     print(f"New top item: {stack.top()}")
-    print(f"Stack count: {stack.getCount()}")
+    print(f"Stack count: {stack.get_count()}")
 
     print("\n" + "="*40 + "\n")
 
@@ -143,19 +142,19 @@ if __name__ == '__main__':
     queue.enqueue('B')
     queue.enqueue('C')
 
-    print(f"Queue count: {queue.get_count()}")
-    print(f"Is queue full? {queue.is_full()}")
+    print(f"Queue count: {queue.getCount()}")
+    print(f"Is queue full? {queue.isFull()}")
     print(f"Front item: {queue.peek()}")
 
     print("\nDequeuing an item...")
     dequeued_item = queue.dequeue()
     print(f"Dequeued: {dequeued_item}")
     print(f"New front item: {queue.peek()}")
-    print(f"Queue count: {queue.get_count()}")
+    print(f"Queue count: {queue.getCount()}")
 
     print("\nEnqueuing another item: 'D'")
     queue.enqueue('D')
     print("Dequeuing again...")
     queue.dequeue()
     print(f"New front item: {queue.peek()}")
-    print(f"Current queue count: {queue.get_count()}")
+    print(f"Current queue count: {queue.getCount()}")
