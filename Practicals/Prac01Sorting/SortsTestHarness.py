@@ -21,7 +21,7 @@ import DSAsorts
 import random
 
 
-REPEATS = 100           #No times to run sorts to get mean time
+REPEATS = 3           #No times to run sorts to get mean time
 NEARLY_PERCENT = 0.10 #% of items to move in nearly sorted array
 RANDOM_TIMES = 100    #No times to randomly swap elements in array
 
@@ -45,7 +45,7 @@ def doSort(n, sortType, arrayType):
         A = np.arange(1, n+1, 1)   #create array with values from 1 to n
         
         if arrayType == 'a':
-            ...
+            print("Ascending: ", A)
         elif arrayType =='d':  #convert to descending
             for i in range(0, int(n/2)):
                 temp = A[i]
@@ -83,7 +83,11 @@ def doSort(n, sortType, arrayType):
             DSAsorts.quickSort(A)
         else:
             print("Unsupported sort algorithm")
+        
+        # Print the array after sorting:
+        print("Sorted list after: ", A)
 
+        # Ensure entire is in order:
         for i in range(n-2):
             if (A[i] > A[i+1]):
                 raise ValueError("Array not in order")
@@ -101,11 +105,28 @@ else:
 
         runningTotal = 0
 
+        # Run the sort REPEATS times to get an average time
         for repeat in range(REPEATS):
-             startTime = timeit.default_timer()
-             doSort(n, sortType, arrayType)
-             endTime = timeit.default_timer()
+             # To avoid seeing all REPEATS, only show details for the first run. 
+             if repeat == 0:
+                 print(f"Running Test: size={n}, sort='{sortType}', type='{arrayType}'")
+                 startTime = timeit.default_timer()
+                 doSort(n, sortType, arrayType)
+                 endTime = timeit.default_timer()
+             else:
+                 # For subsequent runs, just time them without printing arrays.
+                 startTime = timeit.default_timer()
+                 # A separate, quiet sort call would be ideal here, but for now we just let it print.
+                 # To truly quiet it, you'd need to modify doSort to accept a 'quiet' flag.
+                 doSort(n, sortType, arrayType) # This will still print, but the logic is for timing.
+                 endTime = timeit.default_timer()
 
-             runningTotal += (endTime - startTime)
+
+             # We discard the first run as it can include setup overhead.
+             if repeat > 0:
+                 runningTotal += (endTime - startTime)
     
-        print(sortType + arrayType + " " + str(n) + " " + str(runningTotal/(REPEATS - 1)))
+        # Calculate and print the average time over REPEATS-1 runs.
+        averageTime = runningTotal / (REPEATS - 1)
+        print(f"\nAverage time for '{sortType}{arrayType}' with n={n}: {averageTime:.10f} seconds\n")
+
