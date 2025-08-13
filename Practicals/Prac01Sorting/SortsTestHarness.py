@@ -21,7 +21,7 @@ import DSAsorts
 import random
 
 
-REPEATS = 3           #No times to run sorts to get mean time
+REPEATS = 10           # No. times to run sorts to get mean time
 NEARLY_PERCENT = 0.10 #% of items to move in nearly sorted array
 RANDOM_TIMES = 100    #No times to randomly swap elements in array
 
@@ -92,41 +92,34 @@ def doSort(n, sortType, arrayType):
             if (A[i] > A[i+1]):
                 raise ValueError("Array not in order")
 
-#main program
-
-if len(sys.argv) < 3:
+# main program
+if len(sys.argv) < 3: # exception handling - if not enough arguments are given, print the how to use program.
     usage()
-else:
+else: # args handling
     for aa in range(2, len(sys.argv)):
         
-        n = int(sys.argv[1])
-        sortType = sys.argv[aa][0]
-        arrayType = sys.argv[aa][1]
+        n = int(sys.argv[1]) 
+        sortType = sys.argv[aa][0] # in 'br' would be 'b'
+        arrayType = sys.argv[aa][1] # in 'br' would be 'r'
 
-        runningTotal = 0
+        runningTotal = 0 # total sum of time taken for repetitions.
 
-        # Run the sort REPEATS times to get an average time
         for repeat in range(REPEATS):
-             # To avoid seeing all REPEATS, only show details for the first run. 
-             if repeat == 0:
-                 print(f"Running Test: size={n}, sort='{sortType}', type='{arrayType}'")
-                 startTime = timeit.default_timer()
-                 doSort(n, sortType, arrayType)
+             if repeat == 0: # to print the header only once. 
+                 print(f"Running Test: size={n}, sort='{sortType}', type='{arrayType}'") # header
+                 startTime = timeit.default_timer() # TIme before starting the sort. 
+                 doSort(n, sortType, arrayType) # creates the sorted array. 
                  endTime = timeit.default_timer()
              else:
-                 # For subsequent runs, just time them without printing arrays.
+                 # For subsequent runs, doesn't print the header
                  startTime = timeit.default_timer()
-                 # A separate, quiet sort call would be ideal here, but for now we just let it print.
-                 # To truly quiet it, you'd need to modify doSort to accept a 'quiet' flag.
                  doSort(n, sortType, arrayType) # This will still print, but the logic is for timing.
                  endTime = timeit.default_timer()
 
-
-             # We discard the first run as it can include setup overhead.
+             # discard REPEAT = 0 to avoid setup time affecting final time result. 
              if repeat > 0:
-                 runningTotal += (endTime - startTime)
+                 runningTotal += (endTime - startTime) # Add time taken for the current run to the total sum. 
     
-        # Calculate and print the average time over REPEATS-1 runs.
+        # Average time
         averageTime = runningTotal / (REPEATS - 1)
-        print(f"\nAverage time for '{sortType}{arrayType}' with n={n}: {averageTime:.10f} seconds\n")
-
+        print(f"\nAverage time for '{sortType}{arrayType}' with n={n}: {averageTime:.10f} seconds.\n")

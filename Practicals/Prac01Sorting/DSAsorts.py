@@ -1,6 +1,6 @@
-#
+# Author: Thejana Kottawatta Hewage (22307822)
 # Data Structures and Algorithms COMP1002
-#
+# 
 # Python file to hold all sorting methods
 #
 
@@ -9,27 +9,26 @@ def bubbleSort(A):
     Sorts an array using bubble sort. 
     """
     n = len(A)
-    # We need n - 1 passes to guarantee list is sorted
-    for pass_num in range (n-1):
+    pass_num = 0
+    swapped_status = True
+    # We need n - 1 passes to guarantee list is sorted 
+    while swapped_status == True: # loop will only continue as long long as swap was made in the previous pass/ 
         swapped_status = False
         for i in range(n - 1 - pass_num):
             # ii loop in the pseudocode. 
             # n-1-pass_num: range of this loop decreases with each pass. 
             if A[i] > A[i + 1]:
-                # Swap the elements
-                A[i], A[i + 1] = A[i + 1], A[i]
+                A[i], A[i + 1] = A[i + 1], A[i] # swap the elements
                 swapped_status = True
         # if no swaps occur, that means the array has been sorted. 
-        if not swapped_status:
-            break
+        pass_num += 1
 
 def insertionSort(A):
     """
     Pick one block at a time from messy block and insert into correct spot in the tidy block.
-    """
-        # Outer loop begins from 2nd element / index 1. 
+    """ 
     n = len(A)
-    for i in range(1, n):
+    for i in range(1, n): # Outer loop begins from 2nd element. 
         current_element = A[i]
         # position is the index where we will compare and shift elements to.
         position = i #  position is initialised at the current element's index. 
@@ -78,5 +77,3 @@ def quickSortRecurse(A, leftIdx, rightIdx):
 
 def doPartitioning(A, leftIdx, rightIdx, pivotIdx):
     ...
-
-
