@@ -1,5 +1,10 @@
+# Author: Thejana Kottawatta Hewage (22307822)
+# Data Structures and Algorithms COMP1002
+# 
+# classes.py - Python file to hold stack and queue classes. 
+#
+
 class DSAStack:
-    
     DEFAULT_CAPACITY = 100 
     def __init__(self, maxCapacity=None):
         """Default + alternate constructor combined."""
@@ -8,7 +13,7 @@ class DSAStack:
         else:
             capacity = maxCapacity
         
-        self.stack = [None] * capacity
+        self.stack = [None] * capacity # a standard python list. Can successfully hold references to any type of object.
         self.count = 0 
     
     # ACCESSORS
@@ -50,20 +55,20 @@ class DSAStack:
             topVal = self.stack[self.count - 1]
             return topVal
 
-class DSAQueue:
+class DSAQueue(object): # Parent queue class
     """
     A class to represent a shuffling Queue data structure.
     """
 
-    DEFAULT_CAPCITY = 100
+    DEFAULT_CAPACITY = 100
 
     def __init__(self, maxCapacity=None):
         """Default + Alternate constructors combined."""
         if maxCapacity is None:
-            capacity = self.DEFAULT_CAPCITY
+            capacity = self.DEFAULT_CAPACITY
         else:
             capacity = maxCapacity
-        self.queue = [None]*capacity
+        self.queue = [None]*capacity # a standard python list. Can successfully hold references to any type of object.
         self.count = 0
     
     # ACCESSORS
@@ -80,14 +85,22 @@ class DSAQueue:
         """Cehks if queue is full."""
         return self.count == len(self.queue)
     
-    def peek(self):
-        """Checks the front item but doesn't take it off."""
-        if self.isEmpty():
-            raise IndexError("Queue is empty.")
-        else:
-            frontVal = self.queue[0]
-            return frontVal
+    # MUTATORS - to be implemented by sub-classes. 
+    def enqueue(self, value):
+        # To be implemented by sub-clases.
+        raise NotImplementedError("enqueue() to be implemented in sub-class")
+
+    def dequeue(self):
+        raise NotImplementedError("dequeue() to be implemented in sub-class")
     
+    def peek(self):
+        raise NotImplementedError("peek() to be implemented in sub-class")
+
+class DSAShufflingQueue(DSAQueue):
+    """
+    Shuffling implementation of DSAQueue
+    """
+
     # MUTATORS
 
     def enqueue(self, value):
@@ -105,56 +118,97 @@ class DSAQueue:
         
         for i in range(self.count):# shuffle all elements to the left. 
             self.queue[i] = self.queue[i + 1]
-
         
         return frontVal
+    
+    def peek(self):
+        """Checks the front item but doesn't take it off."""
+        if self.isEmpty():
+            raise IndexError("Queue is empty.")
+        else:
+            frontVal = self.queue[0]
+            return frontVal
 
+class DSACircularQueue(DSAQueue):
+    """
+    A class to represent circular queue data structure.
+    More efficient that shuffling queue but trickier to code.
+    """
+    def __init__(self, maxCapacity=None):
+        super(DSACircularQueue, self).__init__(maxCapacity)
+        self.front = 0
+    
+    def enqueue(self, value):
+        """Adds an item to the end of the queue."""
+        if self.isFull():
+            raise IndexError("Queue overflow: queue is full.")
+        else:
+            # Rear index for wraparound. 
+            rear = (self.front + self.count) % len(self.queue)
+            self.queue[rear] = value
+            self.count += 1
+    
+    def dequeue(self):
+        """Removes and returns the front item from the queue."""
+        if self.isEmpty(): # exception
+            raise IndexError("Queue underflow: queue is empty.")
+        frontVal = self.queue[self.front] # value of the front of the queue
+        # shift the front pointer forwards. 
+        self.front = (self.front + 1) % len(self.queue)
+        self.count -= 1
+        return frontVal
+    
+    def peek(self):
+        """Returns the front item without removing it."""
+        if self.isEmpty(): # exception
+            raise IndexError("Queue underflow: queue is empty.")
+        return self.queue[self.front]
+
+# Mini demo
 if __name__ == '__main__':
     print("--- Testing DSAStack ---")
-    # Using alternate constructor
-    stack = DSAStack()
-    print(f"Is stack empty? {stack.isEmpty()}")
-
-    print("\nPushing items: 10, 'hello', 3.14")
+    stack = DSAStack(maxCapacity=5)
     stack.push(10)
     stack.push("hello")
-    stack.push(3.14)
-
-    print(f"Stack count: {stack.get_count()}")
-    print(f"Is stack full? {stack.isFull()}")
-    print(f"Top item: {stack.top()}")
-
-    print("\nPopping an item...")
-    popped_item = stack.pop()
-    print(f"Popped: {popped_item}")
-    print(f"New top item: {stack.top()}")
-    print(f"Stack count: {stack.get_count()}")
+    print(f"Stack Top: {stack.top()}")
+    print(f"Popped: {stack.pop()}")
+    print(f"Stack Count: {stack.get_count()}")
 
     print("\n" + "="*40 + "\n")
 
-    print("--- Testing DSAQueue (Shuffling, following pseudocode) ---")
-    # Using default constructor
-    queue = DSAQueue()
-    print(f"Is queue empty? {queue.isEmpty()}")
+    print("--- Testing DSAShufflingQueue ---")
+    s_queue = DSAShufflingQueue(maxCapacity=5)
+    s_queue.enqueue('A')
+    s_queue.enqueue('B')
+    print(f"Shuffling Queue Front: {s_queue.peek()}")
+    print(f"Dequeued: {s_queue.dequeue()}")
+    print(f"New Front: {s_queue.peek()}")
+    print(f"Shuffling Queue Count: {s_queue.getCount()}")
 
-    print("\nEnqueuing items: 'A', 'B', 'C'")
-    queue.enqueue('A')
-    queue.enqueue('B')
-    queue.enqueue('C')
+    print("\n" + "="*40 + "\n")
 
-    print(f"Queue count: {queue.getCount()}")
-    print(f"Is queue full? {queue.isFull()}")
-    print(f"Front item: {queue.peek()}")
+    print("--- Testing DSACircularQueue ---")
+    c_queue = DSACircularQueue(maxCapacity=5)
+    print(f"Is circular queue empty? {c_queue.isEmpty()}")
 
-    print("\nDequeuing an item...")
-    dequeued_item = queue.dequeue()
-    print(f"Dequeued: {dequeued_item}")
-    print(f"New front item: {queue.peek()}")
-    print(f"Queue count: {queue.getCount()}")
+    print("\nEnqueuing items: 1, 2, 3, 4, 5 (to fill the queue)")
+    for i in range(1, 6):
+        c_queue.enqueue(i)
 
-    print("\nEnqueuing another item: 'D'")
-    queue.enqueue('D')
-    print("Dequeuing again...")
-    queue.dequeue()
-    print(f"New front item: {queue.peek()}")
-    print(f"Current queue count: {queue.getCount()}")
+    print(f"Is circular queue full? {c_queue.isFull()}")
+    print(f"Front item: {c_queue.peek()}")
+
+    print("\nDequeuing two items...")
+    print(f"Dequeued: {c_queue.dequeue()}")
+    print(f"Dequeued: {c_queue.dequeue()}")
+    print(f"New front item: {c_queue.peek()}")
+    print(f"Queue count: {c_queue.getCount()}")
+
+    print("\nEnqueuing two more items (6, 7) to demonstrate wrap-around...")
+    c_queue.enqueue(6)
+    c_queue.enqueue(7)
+
+    print(f"Front item is still: {c_queue.peek()}")
+    print("Dequeuing all remaining items to see the order:")
+    while not c_queue.isEmpty():
+        print(f"Dequeued: {c_queue.dequeue()}")
