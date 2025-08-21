@@ -21,10 +21,8 @@ def calcNFactorialIterative(n):
     for i in range(n, 1, -1): # loop backwards by 1 down to 1. 
         nfactorial = nfactorial * i
     return nfactorial
-print(calcNFactorialIterative(5)) 
-#print(calcNFactorialIterative(-5)) 
-#print(calcNFactorialIterative('string')) 
-#print(calcNFactorialIterative(1000))
+# print("Factorial of 5: ", calcNFactorialIterative(5))
+
 def calcNFactorialRecursive(n):
     """Calculates the factorial of n recursively."""
     # Exceptions handling
@@ -43,8 +41,7 @@ def calcNFactorialRecursive(n):
         # Multiplies n with the result of factorial of n-1
         factorial = n * calcNFactorialRecursive(n - 1) # function itself is called again.
     return factorial 
-print(calcNFactorialRecursive(5)) # Example usage
-print(calcNFactorialRecursive(980))
+# print("Recursive factorial of 5: ", calcNFactorialRecursive(5))
 
 def fibIterative(n):
     """Calculates the nth Fibonacci number iteratively."""
@@ -66,10 +63,7 @@ def fibIterative(n):
         lastVal = currentVal #
         currentVal = fibVal
     return currentVal
-print(fibIterative(5)) 
-print(fibIterative(-5)) 
-print(fibIterative('string')) 
-print(fibIterative(1000))
+
 def fibRecursive(n):
     if not isinstance(n, int):
         raise InvalidInputError("Input must be an integer.!!   ")
@@ -85,10 +79,10 @@ def fibRecursive(n):
     else: # recursive step
         fibVal = fibRecursive(n - 1) + fibRecursive(n - 2) # function itself is called again.
     return fibVal
-print(fibRecursive(5)) 
-print(fibRecursive(-5)) 
-print(fibRecursive('string')) 
-print(fibRecursive(1000))
+print(fibRecursive(4)) 
+#print(fibRecursive(-5)) 
+#print(fibRecursive('string')) 
+#print(fibRecursive(1000))
 
 def gcdIterative(a, b):
     """Calculates GCD of a and b iteratively."""
@@ -99,10 +93,10 @@ def gcdIterative(a, b):
         #
         a = b
         b = a % b # remainder of the old 'a' is divided by old ''
-print(gcdIterative(5)) 
-print(gcdIterative(-5)) 
-print(gcdIterative('string')) 
-print(gcdIterative(1000))
+# print(gcdIterative(5, 5))
+#print(gcdIterative(-5)) 
+#print(gcdIterative('string')) 
+#print(gcdIterative(1000))
 def gcdRecursive(a, b):
     """Calculates the GCD of a and b recursively."""
     # Exceptions handing:
@@ -116,10 +110,10 @@ def gcdRecursive(a, b):
         # remainder of the division of a by b. 
         # reducing the number till base base is reached. 
         return gcdRecursive(b, a % b)
-print(gcdRecursive(5)) 
-print(gcdRecursive(-5)) 
-print(gcdRecursive('string')) 
-print(gcdRecursive(1000))
+# print(gcdRecursive(5, 5)) 
+#print(gcdRecursive(-5)) 
+#print(gcdRecursive('string')) 
+#print(gcdRecursive(1000))
 def convertToBase_recursive(n, base):
     """Converts a number n to a given base recursively."""
     """
@@ -235,5 +229,5 @@ def performanceTestMain():
     print("Factorial & GCD: Performance is very similar. The overhead of recursive function calls is minimal for these algorithms.")
     print("Fibonacci: The iterative version is DRAMATICALLY faster. The recursive version recalculates the same values many times, leading to exponential time complexity.")
 
-if __name__ == "__main__":
-    performanceTestMain()
+# if __name__ == "__main__":
+#     performanceTestMain()

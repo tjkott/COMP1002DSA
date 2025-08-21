@@ -74,4 +74,3 @@ if __name__ == "__main__":
         print(f"Invalid input: {error}")
     except ValueError: # Catching ValueError for invalid integer input
         print("Please enter a valid integer for the number of disks. (1 -3)")
-
