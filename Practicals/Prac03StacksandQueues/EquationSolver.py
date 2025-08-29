@@ -10,10 +10,9 @@ class EquationSolver:
     """
     Class to solve equations in infix notation.
     """
-
     def solve(self, equation):
-        postfix_queue = self._parseInfixToPostfix(equation)
-        result = self.evaluatePostfix(postfix_queue)
+        postfixQueue = self._parseInfixToPostfix(equation)
+        result = self._evaluatePostfix(postfixQueue) # calls private helper method to calculate the final answer from the postfix queue. 
         return result
     
     def _parseInfixToPostfix(self, equation):
@@ -53,8 +52,16 @@ class EquationSolver:
         opStack = DSAStack()
         while not postfixQueue.isEmpty():
             term = postfixQueue.dequeue()
-            if isinstance(term, float): 
-
+            if isinstance(term, float):
+                opStack.push(term)
+            else: # else it should be an operator. 
+                op2 = opStack.pop()
+                op1 = opStack.pop()
+                result = self._execute_operation(term, op1, op2)
+                opStack.push(result)
+        if opStack.get_count() != 1:
+            raise ValueError("Invalid postfix equation.")
+        return opStack.pop()
 
     def _get_precedence(self, operator):
         """Returns the precedence of the given operator."""
@@ -63,3 +70,41 @@ class EquationSolver:
         elif operator in ['*', '/']:
             return 2
         return 0
+    
+    def _execute_operation(self, op, op1, op2):
+        if op == '+':
+            return op1 + op2
+        elif op == '-':
+            return op1 - op2
+        elif op == '*':
+            return op1 * op2
+        elif op == '/':
+            if op2 == 0:
+                raise ValueError("Division by zero.")
+            return op1 / op2
+
+
+if __name__ == '__main__':
+    solver = EquationSolver()
+    
+    # List of test equations
+    test_equations = ["3 * 4 + 5", #simple equation
+        "( 3 + 4 ) * 5", # brackets
+        "( 10.3 * ( 14 + 3.2 ) ) / ( 5 + 2 - 4 * 3 )"
+    ]
+    
+    # Loop through the equations and solve them
+    for i, eq in enumerate(test_equations):
+        print(f"Equation {i+1}")
+        print(f"Solving Infix: '{eq}'")
+        
+        try: # exceptions handling.
+            # Step 1: Convert to postfix
+            postfixEq = solver._parseInfixToPostfix(eq)
+            print(f"Postfix version: {postfixEq}")
+            
+            # Step 2: Evaluate the postfix queue
+            result = solver._evaluatePostfix(postfixEq)
+            print(f"Result: {result}\n")
+        except ValueError as e:
+            print(f"Error solving equation: {e}\n")
