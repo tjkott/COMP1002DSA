@@ -7,98 +7,99 @@ class DSAHashEntry: # Single box in the hash table.
     STATE_USED = 1 # box is currently in use. Currently holds a key-value pair. 
     STATE_FORMERLY_USED = -1 # slot used to hold data but now removed. 
 
-    def __init__(self, in_key=None, in_value=None):
+    def __init__(self, inputKey=None, inputValue=None):
         # CONSTRUCTOR
-        if in_key is not None: # if key and value is proided, create "USED" entry. 
-            self.key = in_key
-            self.value = in_value
+        if inputKey is not None: # if key and value is proided, create "USED" entry. 
+            self.key = inputKey
+            self.value = inputValue
             self.state = self.STATE_USED
         else: # if no data is provided -> create a "FREE" entry. 
             self.key = ""
             self.value = None
             self.state = self.STATE_FREE
 
-
-# Implements a hash table data structure with 
-# The implementation follows the structure and guidelines from the provided lecture materials.
 class DSAHashTable:
-    _STEP_HASH_MAX = 5
-    _MAX_LOAD_FACTOR = 0.75
-    _MIN_LOAD_FACTOR = 0.25
-    _INITIAL_CAPACITY = 11
+    """Hash table itself."""
+    STEP_HASH_MAX = 5 # Used in double hashing function to calcualte step size. 
+    MAX_LOAD_FACTOR = 0.75 # if table gets more than 75% full, trigger resize to make it bigger. 
+    MIN_LOAD_FACTOR = 0.25 # if table is less than 25% full, trigger resize to make it smaller and save memory. 
+    INITIAL_CAPACITY = 11 # default starting size of table. 
 
-    def __init__(self, table_size=None):
-        if table_size is None:
-            table_size = self._INITIAL_CAPACITY
-        actual_size = self._find_next_prime(table_size)
-        self.hash_array = [DSAHashEntry() for _ in range(actual_size)]
+    def __init__(self, tableSize=None):
+        # CONSTRUCTOR
+        if tableSize is None: # if no siz given, use default capacity. 
+            tableSize = self.INITIAL_CAPACITY
+
+        actualSize = self.find_next_prime(tableSize) # using next great prime number is a strategy to distribute keys more evenly. 
+        self.hashArray = [DSAHashEntry() for s in range(actualSize)] # initialise hash array
         self.count = 0
 
     def put(self, in_key, in_value):
-        if self.get_load_factor() >= self._MAX_LOAD_FACTOR:
-            self._resize(self.get_capacity() * 2)
+        if self.get_load_factor() >= self.MAX_LOAD_FACTOR:
+            self.resize(self.getCapacity() * 2)
         
         in_key = str(in_key) # Ensure key is a string
-        hash_idx = self._hash(in_key)
-        step = self._step_hash(in_key)
+        hashID = self.hash(in_key) # get the initial array index using main hash function
+        step = self.stepHash(in_key) # get step size for probing using 2nd hash function
         
-        initial_pos = hash_idx
+        initialPos = hashID
         i = 1
         is_new_entry = True
 
-        while self.hash_array[hash_idx].state == DSAHashEntry.STATE_USED:
-            if self.hash_array[hash_idx].key == in_key:
-                self.hash_array[hash_idx].value = in_value
+        # PROBING -
+        while self.hashArray[hashID].state == DSAHashEntry.STATE_USED: # as long as current hash slot is being used. 
+            if self.hashArray[hashID].key == in_key: # if keys match, just update to new value and stop. 
+                self.hashArray[hashID].value = in_value
                 is_new_entry = False
                 break
-            hash_idx = (initial_pos + i * step) % self.get_capacity()
-            i += 1
-            if hash_idx == initial_pos:
+            hashID = (initialPos + i * step) % self.getCapacity()
+            i += 1 # probe jump to the next slot. 
+            if hashID == initialPos: # if entire array was probed and we have returned to our start position. 
                 raise OverflowError(f"Hash table is full. Cannot insert key '{in_key}'.")
-
-        if is_new_entry:
-            self.hash_array[hash_idx] = DSAHashEntry(in_key, in_value)
+        if is_new_entry: # if no matching keys were found: ,eans we found a free slot. 
+            self.hashArray[hashID] = DSAHashEntry(in_key, in_value) # place new key-value pair
             self.count += 1
 
-    def get(self, in_key):
-        in_key = str(in_key) # Ensure key is a string
-        hash_idx = self._find(in_key)
-        if hash_idx == -1:
-            raise KeyError(f"Key not found: {in_key}")
-        return self.hash_array[hash_idx].value
+    def get(self, inputKey):
+        inputKey = str(inputKey) # Ensure key is a string
+        hashID = self.find(inputKey)
+        if hashID == -1:
+            raise KeyError(f"Key not found: {inputKey}")
+        return self.hashArray[hashID].value
 
-    def __contains__(self, in_key):
+    def contains(self, in_key):
         in_key = str(in_key) # Ensure key is a string
-        return self._find(in_key) != -1
+        return self.find(in_key) != -1
 
-    def remove(self, in_key):
-        in_key = str(in_key) # Ensure key is a string
-        hash_idx = self._find(in_key)
-        if hash_idx == -1:
-            raise KeyError(f"Key not found: {in_key}")
+    def remove(self, inputKey):
+        inputKey = str(inputKey) # Ensure key is a string
+        hashID = self.find(inputKey) 
+        if hashID == -1:
+            raise KeyError(f"Key not found: {inputKey}")
 
-        value = self.hash_array[hash_idx].value
-        self.hash_array[hash_idx].state = DSAHashEntry.STATE_FORMERLY_USED
-        self.hash_array[hash_idx].key = ""
-        self.hash_array[hash_idx].value = None
+        value = self.hashArray[hashID].value
+        self.hashArray[hashID].state = DSAHashEntry.STATE_FORMERLY_USED # instead of clearing slot immediately, mark as formerly used. 
+        self.hashArray[hashID].key = ""
+        self.hashArray[hashID].value = None
         self.count -= 1
 
-        if self.get_capacity() > self._INITIAL_CAPACITY and self.get_load_factor() < self._MIN_LOAD_FACTOR:
-             self._resize(self.get_capacity() // 2)
+        # after removing, check if table is now too empty. Shrink to save memory. 
+        if self.getCapacity() > self.INITIAL_CAPACITY and self.get_load_factor() < self.MIN_LOAD_FACTOR:
+             self.resize(self.getCapacity() // 2)
         return value
 
     def get_load_factor(self):
-        return self.count / self.get_capacity() if self.get_capacity() > 0 else 0
+        return self.count / self.getCapacity() if self.getCapacity() > 0 else 0
 
-    def get_capacity(self):
-        return len(self.hash_array)
+    def getCapacity(self):
+        return len(self.hashArray)
 
     def get_count(self):
         return self.count
 
     def display(self):
-        print(f"--- Hash Table (Count: {self.count}, Capacity: {self.get_capacity()}) ---")
-        for i, entry in enumerate(self.hash_array):
+        print(f"--- Hash Table (Count: {self.count}, Capacity: {self.getCapacity()}) ---")
+        for i, entry in enumerate(self.hashArray):
             print(f"[{i}]: ", end="")
             if entry.state == DSAHashEntry.STATE_USED:
                 print(f"'{entry.key}' -> {entry.value}")
@@ -108,7 +109,7 @@ class DSAHashTable:
                 print("<free>")
         print("-------------------------------------")
     
-    @classmethod
+    
     def load_from_csv(cls, filename):
         """
         Class method to load data from a CSV file into a new hash table.
@@ -149,7 +150,7 @@ class DSAHashTable:
             
         return table
 
-    def save_to_csv(self, filename):
+    def save2csv(self, filename):
         """
         Saves the contents of the hash table to a CSV file.
         Args:
@@ -162,48 +163,48 @@ class DSAHashTable:
             
             saved_count = 0
             # Iterate through the internal array and write used entries
-            for entry in self.hash_array:
+            for entry in self.hashArray:
                 if entry.state == DSAHashEntry.STATE_USED:
                     writer.writerow([entry.value, entry.key])
                     saved_count += 1
         
         print(f"Save complete. {saved_count} entries written to file.")
 
-    def _resize(self, new_size):
-        old_array = self.hash_array
-        new_capacity = self._find_next_prime(new_size)
-        self.hash_array = [DSAHashEntry() for _ in range(new_capacity)]
+    def resize(self, new_size):
+        old_array = self.hashArray
+        new_capacity = self.find_next_prime(new_size)
+        self.hashArray = [DSAHashEntry() for _ in range(new_capacity)]
         self.count = 0
         for entry in old_array:
             if entry.state == DSAHashEntry.STATE_USED:
                 self.put(entry.key, entry.value)
 
-    def _find(self, in_key):
-        hash_idx = self._hash(in_key)
-        step = self._step_hash(in_key)
+    def find(self, in_key):
+        hash_idx = self.hash(in_key)
+        step = self.stepHash(in_key)
         initial_pos = hash_idx
         i = 1
-        while self.hash_array[hash_idx].state != DSAHashEntry.STATE_FREE:
-            if self.hash_array[hash_idx].state == DSAHashEntry.STATE_USED and \
-               self.hash_array[hash_idx].key == in_key:
+        while self.hashArray[hash_idx].state != DSAHashEntry.STATE_FREE:
+            if self.hashArray[hash_idx].state == DSAHashEntry.STATE_USED and \
+               self.hashArray[hash_idx].key == in_key:
                 return hash_idx
-            hash_idx = (initial_pos + i * step) % self.get_capacity()
+            hash_idx = (initial_pos + i * step) % self.getCapacity()
             i += 1
             if hash_idx == initial_pos:
                 return -1
         return -1
 
-    def _hash(self, in_key):
+    def hash(self, in_key):
         hash_idx = 0
         for char in in_key:
             hash_idx = (31 * hash_idx) + ord(char)
-        return abs(hash_idx % self.get_capacity())
+        return abs(hash_idx % self.getCapacity())
 
-    def _step_hash(self, in_key):
-        hash_val = self._hash(in_key)
-        return self._STEP_HASH_MAX - (abs(hash_val) % self._STEP_HASH_MAX)
+    def stepHash(self, in_key): # secondary hash function
+        hash_val = self.hash(in_key)
+        return self.STEP_HASH_MAX - (abs(hash_val) % self.STEP_HASH_MAX)
 
-    def _find_next_prime(self, start_val):
+    def find_next_prime(self, start_val):
         if start_val <= 2: return 2
         prime_val = int(start_val)
         if prime_val % 2 == 0: prime_val += 1

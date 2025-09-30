@@ -21,7 +21,7 @@ def main():
     
     # Start with a small capacity to ensure resizing happens multiple times
     name_table = DSAHashTable(101)
-    print(f"Initial Table Capacity: {name_table.get_capacity()}")
+    print(f"Initial Table Capacity: {name_table.getCapacity()}")
 
     keys_in_table = []
     with open(input_filename, 'r', encoding='utf-8') as f:
@@ -38,11 +38,11 @@ def main():
                 if count % 500 == 0:
                     print(f"  Processed {count} entries. "
                           f"Load Factor: {name_table.get_load_factor():.2f} "
-                          f"({name_table.get_count()}/{name_table.get_capacity()})")
+                          f"({name_table.get_count()}/{name_table.getCapacity()})")
     
     print("\n--- Hash Table Statistics After Loading ---")
     print(f"Total unique entries loaded: {name_table.get_count()}")
-    print(f"Final table capacity after expansion: {name_table.get_capacity()}")
+    print(f"Final table capacity after expansion: {name_table.getCapacity()}")
     print(f"Final load factor: {name_table.get_load_factor():.2f}")
 
 
@@ -66,16 +66,16 @@ def main():
         if (i + 1) % 500 == 0:
             print(f"  Removed {i+1} entries. "
                   f"Load Factor: {name_table.get_load_factor():.2f} "
-                  f"({name_table.get_count()}/{name_table.get_capacity()})")
+                  f"({name_table.get_count()}/{name_table.getCapacity()})")
 
     print("\n--- Hash Table Statistics After Removing ---")
     print(f"Entries remaining: {name_table.get_count()}")
-    print(f"Final table capacity after shrinking: {name_table.get_capacity()}")
+    print(f"Final table capacity after shrinking: {name_table.getCapacity()}")
     print(f"Final load factor: {name_table.get_load_factor():.2f}")
 
     # --- Phase 3: Save the remaining hash table contents ---
     print("\n--- Phase 3: Saving remaining data to a new CSV ---")
-    name_table.save_to_csv(output_filename)
+    name_table.save2csv(output_filename)
 
     print(f"\nProcess complete. You can now inspect '{output_filename}'.")
 
