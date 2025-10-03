@@ -136,7 +136,7 @@ class DSAGraph:
         return False
 
     def displayAsList(self): # ACCESSOR [cite: 2, 3]
-        print("\n--- Adjacency List ---")
+        print("\n### Adjacency List ###")
         for vertex in self.vertices:
             adj_str = " -> ".join([n.toString() for n in vertex.getAdjacent()])
             print(f"{vertex.getLabel()} | {adj_str}")
@@ -201,9 +201,10 @@ class DSAGraph:
         return list(T)
 
     def depthFirstSearch(self):
+        """As deep as possible down one path."""
         self.clear_visited_flags()
         T = collections.deque()
-        S = []
+        S = [] # last in first out stack. 
 
         if self.getVertexCount() == 0: return []
 
@@ -211,12 +212,12 @@ class DSAGraph:
         start_node.setVisited()
         S.append(start_node)
 
-        while S:
-            v = S[-1]
-            w = self.get_next_unvisited_neighbor(v)
-            if w:
-                T.append((v.getLabel(), w.getLabel()))
-                w.setVisited()
+        while S: # as long as vertices are on the stack. 
+            v = S[-1] # pEek at the vertex on top of the stack
+            w = self.get_next_unvisited_neighbor(v) # Find unvisited neighbour of v
+            if w: # if unvisited neighbour is found. 
+                T.append((v.getLabel(), w.getLabel())) # record the edge. 
+                w.setVisited() 
                 S.append(w)
             else:
                 S.pop()
@@ -317,3 +318,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+"""insert graph just like it shows in the wtutor's a4 sheet"""
