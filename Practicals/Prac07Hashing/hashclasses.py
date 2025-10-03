@@ -30,7 +30,7 @@ class DSAHashTable:
         if tableSize is None: # if no siz given, use default capacity. 
             tableSize = self.INITIAL_CAPACITY
 
-        actualSize = self.find_next_prime(tableSize) # using next great prime number is a strategy to distribute keys more evenly. 
+        actualSize = self.findPrime(tableSize) # using next great prime number is a strategy to distribute keys more evenly. 
         self.hashArray = [DSAHashEntry() for s in range(actualSize)] # initialise hash array
         self.count = 0
 
@@ -164,7 +164,7 @@ class DSAHashTable:
     def resize(self, new_size):
         """Resizing when hash table is oo full or empty. """
         old_array = self.hashArray # 1. # Keep a reference to the old array. 
-        new_capacity = self.find_next_prime(new_size)
+        new_capacity = self.findPrime(new_size)
         self.hashArray = [DSAHashEntry() for _ in range(new_capacity)]
         self.count = 0
         for entry in old_array:
@@ -188,19 +188,23 @@ class DSAHashTable:
         return -1
 
     def hash(self, inputKey):
-        hashID = 0
-        for char in inputKey:
-            hashID = (31 * hashID) + ord(char)
-        return abs(hashID % self.getCapacity()) # 
+        hashID = 0 # 1 initial hash value is 0. 
+        for char in inputKey: #2: Loop through every character in the key. 
+            hashID = (31 * hashID) + ord(char) # 3: Apply hash formula = 31*hashId + char_number
+        return abs(hashID % self.getCapacity()) # gurantees result fits and never negative. Large number % table capacity
 
-    def stepHash(self, in_key): # secondary hash function - step size, 
-        hash_val = self.hash(in_key)
-        return self.STEP_HASH_MAX - (abs(hash_val) % self.STEP_HASH_MAX)
+    def stepHash(self, inputKey): # double hashing 
+        hashID = self.hash(inputKey) # find initial hash number
+        # guarantee stepsize is never 0. 
+        return self.STEP_HASH_MAX - (abs(hashID) % self.STEP_HASH_MAX) # C - (hashID % C)
 
-    def find_next_prime(self, start_val):
-        if start_val <= 2: return 2
+    def findPrime(self, start_val):
+        """Returns next prime number"""
+        if start_val <= 2: 
+            return 2
         prime_val = int(start_val)
-        if prime_val % 2 == 0: prime_val += 1
+        if prime_val % 2 == 0: # Ensure value is an odd number
+            prime_val += 1
         is_prime = False
         while not is_prime:
             is_prime = True
@@ -213,3 +217,4 @@ class DSAHashTable:
             if not is_prime:
                 prime_val += 2
         return prime_val
+

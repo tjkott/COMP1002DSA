@@ -11,7 +11,7 @@ def main():
     input_filename = 'RandomNames7000.csv'
     output_filename = 'hash_table_contents_after_resize.csv'
 
-    if not os.path.exists(input_filename):
+    if not os.path.exists(input_filename): # heck if file is int he program directory. 
         print(f"Error: Input file '{input_filename}' not found.")
         print("Please make sure the CSV file is in the same directory.")
         return
@@ -19,26 +19,26 @@ def main():
     # --- Phase 1: Load data and demonstrate table EXPANSION ---
     print("--- Phase 1: Loading data to trigger table expansion ---")
     
-    # Start with a small capacity to ensure resizing happens multiple times
-    name_table = DSAHashTable(101)
+    # Start with a small capacity to ensure resizing process occurs. 
+    name_table = DSAHashTable(101) # begin with small capacity of 101. 
     print(f"Initial Table Capacity: {name_table.getCapacity()}")
 
     keys_in_table = []
     with open(input_filename, 'r', encoding='utf-8') as f:
         reader = csv.reader(f)
         count = 0
-        for row in reader:
+        for row in reader: # read the csv file one row at a time. 
             if len(row) == 2:
-                user_id, name = row[0], row[1]
-                name_table.put(name, user_id)
-                keys_in_table.append(name) # Store keys for later removal
+                user_id, name = row[0], row[1] 
+                name_table.put(name, user_id) 
+                keys_in_table.append(name) # store names to list for later. 
                 count += 1
 
                 # Print a status update every 500 entries
                 if count % 500 == 0:
                     print(f"  Processed {count} entries. "
-                          f"Load Factor: {name_table.getLoadFactor():.2f} "
-                          f"({name_table.getCount()}/{name_table.getCapacity()})")
+                          f"Load Factor: {name_table.getLoadFactor():.2f} " # how full the table is 
+                          f"({name_table.getCount()}/{name_table.getCapacity()})") # if factoor > .75, will resize. 
     
     print("\n--- Hash Table Statistics After Loading ---")
     print(f"Total unique entries loaded: {name_table.getCount()}")
@@ -51,7 +51,7 @@ def main():
     
     # Remove a large portion of the keys to trigger shrinking
     # The table will shrink when the load factor drops below 0.25
-    items_to_remove_count = int(len(keys_in_table) * 0.85)
+    items_to_remove_count = int(len(keys_in_table) * 0.85) # remove 85% of the items. 
     print(f"Preparing to remove {items_to_remove_count} entries...")
 
     for i in range(items_to_remove_count):

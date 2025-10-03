@@ -1,44 +1,59 @@
-import collections
+import collections # deque needed for BFS
 from collections import deque
 
-# DSALinkedList remains the same as it's a utility class.
 class DSALinkedList:
-    class _DSAListNode:
+    """Simple Linked List class."""
+    class DSAListNode:
+        """Constructor for single node."""
         def __init__(self, value):
-            self.value = value
-            self.next = None
-    def __init__(self):
-        self.head = None; self.count = 0
-    def insert_last(self, value):
-        new_node = self._DSAListNode(value)
+            self.value = value # each node stores value
+            self.next = None # and pointer to the next node. 
+
+    def __init__(self): # constructor for the chain. 
+        self.head = None 
+        self.count = 0 # counter to keep track of nodes in the list. 
+
+    def insert_last(self, value): 
+        # Add a new ndoe to the end of the list. 
+        new_node = self.DSAListNode(value)
         if self.head is None: self.head = new_node
         else:
-            curr = self.head
-            while curr.next: curr = curr.next
-            curr.next = new_node
+            temp = self.head # temp pointer at the beginning fof the list. 
+            while temp.next: # walk the pointer down the chain untul last node is reached. 
+                temp = temp.next
+            temp.next = new_node # point last node's reference to new node. 
         self.count += 1
+
     def __iter__(self):
-        curr = self.head
-        while curr: yield curr.value; curr = curr.next
-    def __len__(self): return self.count
+        # __iter__ makes the list iterable. 
+        temp = self.head
+        while temp == None:
+            yield temp.value # yield is like return that pauses and can be resuemd. 
+            temp = temp.next
+    def __len__(self):
+        return self.count 
     def remove(self, value):
-        prev, curr = None, self.head
-        while curr and curr.value != value: prev, curr = curr, curr.next
-        if curr is None: return
-        if prev is None: self.head = curr.next
-        else: prev.next = curr.next
+        # Find specific value within chain and removes the link. 
+        previous, current = None, self.head # prev will trail one set behind current.
+        while current and current.value != value: # walk both pointers down the list until final reached. 
+            previous, current = current, current.next
+        if current is None: 
+            return
+        if previous is None: 
+            self.head = current.next
+        else: 
+            previous.next = current.next
         self.count -= 1
 
 class DSAGraphVertex:
     """
-    Represents a single vertex in the graph. Renamed from DSAGraphNode.
-    Method names and fields now match the provided class diagram. 
+    Represents a single vertex in the graph. 
     """
     def __init__(self, inLabel, inValue=None): # CONSTRUCTOR 
         self._label = inLabel
         self._value = inValue
         self.links = DSALinkedList() # Adjacency list is now 'links' 
-        self.visited = False
+        self.visited = False 
 
     def getLabel(self): # ACCESSOR 
         return self._label
@@ -64,8 +79,7 @@ class DSAGraphVertex:
     def toString(self): # ACCESSOR 
         return str(self._label)
     
-    def __repr__(self):
-        """Makes printing the object call the required toString() method."""
+    def __repr__(self): 
         return self.toString()
 
 class DSAGraph:
@@ -74,30 +88,34 @@ class DSAGraph:
     Each vertex has a label, possible value, and a linked list of neighbours. 
     """
     def __init__(self): # CONSTRUCTOR 
-        self.vertices = DSALinkedList()
+        self.vertices = DSALinkedList() # graph begins with empty linked list. 
 
     def addVertex(self, label, value=None): # MUTATOR 
-        if not self.hasVertex(label):
+        if not self.hasVertex(label): # prevent duplicates. 
             self.vertices.insert_last(DSAGraphVertex(label, value))
 
     def addEdge(self, label1, label2): # MUTATOR 
-        self.addVertex(label1)
+        self.addVertex(label1) # vertex i s created automatically if it does not exist. 
         self.addVertex(label2)
         node1, node2 = self.getVertex(label1), self.getVertex(label2)
-        if node1 and node2:
+        if node1 and node2: # if both vertices found successfulu
             node1.addEdge(node2)
             node2.addEdge(node1) # For undirected graph 
     
     def hasVertex(self, label): # ACCESSOR 
+        # eistence of vertex. 
         return self.getVertex(label) is not None
 
     def getVertexCount(self): # ACCESSOR
+        # count vertex 
         return len(self.vertices)
 
     def getEdgeCount(self): # ACCESSOR 
+        # count edges
         return sum(len(v.getAdjacent()) for v in self.vertices) // 2
 
     def getVertex(self, label): # ACCESSOR 
+        
         for vertex in self.vertices:
             if vertex.getLabel() == label:
                 return vertex
@@ -125,7 +143,7 @@ class DSAGraph:
         print("\n")
 
     def displayAsMatrix(self): # ACCESSOR [cite: 2, 3]
-        print("\n--- Adjacency Matrix ---")
+        print("\n### Adjacency Matrix ###")
         labels = sorted([v.getLabel() for v in self.vertices])
         print("  " + " ".join(labels))
         for row_label in labels:
