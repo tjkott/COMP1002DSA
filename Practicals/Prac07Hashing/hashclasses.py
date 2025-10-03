@@ -34,33 +34,35 @@ class DSAHashTable:
         self.hashArray = [DSAHashEntry() for s in range(actualSize)] # initialise hash array
         self.count = 0
 
-    def put(self, in_key, in_value):
-        if self.get_load_factor() >= self.MAX_LOAD_FACTOR:
+    def put(self, inputKey, inputvalue):
+        ## Adds key-value pair to the table. 
+        if self.getLoadFactor() >= self.MAX_LOAD_FACTOR:
             self.resize(self.getCapacity() * 2)
         
-        in_key = str(in_key) # Ensure key is a string
-        hashID = self.hash(in_key) # get the initial array index using main hash function
-        step = self.stepHash(in_key) # get step size for probing using 2nd hash function
+        inputKey = str(inputKey) # Ensure key is a string
+        hashID = self.hash(inputKey) # get the initial array index using main hash function
+        step = self.stepHash(inputKey) # get step size for probing using 2nd hash function
         
         initialPos = hashID
         i = 1
         is_new_entry = True
 
-        # PROBING -
+        # PROBING until free slot is found. 
         while self.hashArray[hashID].state == DSAHashEntry.STATE_USED: # as long as current hash slot is being used. 
-            if self.hashArray[hashID].key == in_key: # if keys match, just update to new value and stop. 
-                self.hashArray[hashID].value = in_value
+            if self.hashArray[hashID].key == inputKey: # if keys match, just update to new value and stop. 
+                self.hashArray[hashID].value = inputvalue
                 is_new_entry = False
                 break
             hashID = (initialPos + i * step) % self.getCapacity()
             i += 1 # probe jump to the next slot. 
             if hashID == initialPos: # if entire array was probed and we have returned to our start position. 
-                raise OverflowError(f"Hash table is full. Cannot insert key '{in_key}'.")
+                raise OverflowError(f"Hash table is full. Cannot insert key '{inputKey}'.")
         if is_new_entry: # if no matching keys were found: ,eans we found a free slot. 
-            self.hashArray[hashID] = DSAHashEntry(in_key, in_value) # place new key-value pair
+            self.hashArray[hashID] = DSAHashEntry(inputKey, inputvalue) # place new key-value pair
             self.count += 1
 
     def get(self, inputKey):
+        ## Retrieves value using corresponding key. 
         inputKey = str(inputKey) # Ensure key is a string
         hashID = self.find(inputKey)
         if hashID == -1:
@@ -72,6 +74,7 @@ class DSAHashTable:
         return self.find(in_key) != -1
 
     def remove(self, inputKey):
+        ## Removes key-value pair from the table.
         inputKey = str(inputKey) # Ensure key is a string
         hashID = self.find(inputKey) 
         if hashID == -1:
@@ -84,17 +87,18 @@ class DSAHashTable:
         self.count -= 1
 
         # after removing, check if table is now too empty. Shrink to save memory. 
-        if self.getCapacity() > self.INITIAL_CAPACITY and self.get_load_factor() < self.MIN_LOAD_FACTOR:
+        if self.getCapacity() > self.INITIAL_CAPACITY and self.getLoadFactor() < self.MIN_LOAD_FACTOR:
              self.resize(self.getCapacity() // 2)
         return value
-
-    def get_load_factor(self):
+    
+    ### HELPER FUNCTIONS ###
+    def getLoadFactor(self): # % of number of items / total capcity
         return self.count / self.getCapacity() if self.getCapacity() > 0 else 0
 
-    def getCapacity(self):
+    def getCapacity(self): # total length of internal array. 
         return len(self.hashArray)
 
-    def get_count(self):
+    def getCount(self): # number of items currently stored/ 
         return self.count
 
     def display(self):
@@ -111,51 +115,38 @@ class DSAHashTable:
     
     
     def load_from_csv(cls, filename):
-        """
-        Class method to load data from a CSV file into a new hash table.
-        Assumes CSV format: id,name
-        Args:
-            filename (str): The path to the CSV file.
-        Returns:
-            A new DSAHashTable instance populated with the data.
-        """
-        # Read the file once to count the lines for initial sizing
+        """Returns fully populated hash table from csv file."""
+        
+        # Step 1: Read the file once to count the lines for initial sizing
         line_count = 0
-        with open(filename, 'r', encoding='utf-8') as f:
-            reader = csv.reader(f)
-            # Skip header if it exists
-            # next(reader, None) 
-            for _ in reader:
+        with open(filename, 'r', encoding='utf-8') as file:
+            reader = csv.reader(file) # built-in python csv reader. 
+            for i in reader:
                 line_count += 1
         
-        # Create a table sized appropriately for the data
-        table = cls(int(line_count * 1.5)) # Start with some buffer
+        # Step 2: Create a table sized appropriately for the data
+        table = cls(int(line_count * 1.5)) # Start with some buffer - 1.5x is a good starting point
         
         print(f"Loading data from '{filename}' into a new hash table...")
         
         duplicates = 0
-        with open(filename, 'r', encoding='utf-8') as f:
-            reader = csv.reader(f)
+
+        # Step 3: REad the file again in order to populate the table. 
+        with open(filename, 'r', encoding='utf-8') as file:
+            reader = csv.reader(file)
             for row in reader:
                 if len(row) == 2:
-                    user_id, name = row[0], row[1]
+                    id, name = row[0], row[1] # name = key, id = value
                     if name in table:
                         duplicates += 1
-                    # Use the name as the key and the ID as the value
-                    table.put(name, user_id) 
-        
+                    table.put(name, id) 
         print(f"Load complete. {table.get_count()} unique entries loaded.")
         if duplicates > 0:
             print(f"Note: {duplicates} duplicate names were found and their ID values were updated.")
-            
         return table
 
     def save2csv(self, filename):
-        """
-        Saves the contents of the hash table to a CSV file.
-        Args:
-            filename (str): The path for the output CSV file.
-        """
+        ### Saves current hash table to csv file ###
         print(f"Saving hash table contents to '{filename}'...")
         with open(filename, 'w', newline='', encoding='utf-8') as f:
             writer = csv.writer(f)
@@ -171,7 +162,8 @@ class DSAHashTable:
         print(f"Save complete. {saved_count} entries written to file.")
 
     def resize(self, new_size):
-        old_array = self.hashArray
+        """Resizing when hash table is oo full or empty. """
+        old_array = self.hashArray # 1. # Keep a reference to the old array. 
         new_capacity = self.find_next_prime(new_size)
         self.hashArray = [DSAHashEntry() for _ in range(new_capacity)]
         self.count = 0
@@ -180,6 +172,7 @@ class DSAHashTable:
                 self.put(entry.key, entry.value)
 
     def find(self, in_key):
+        """Search function used by get and remove."""
         hash_idx = self.hash(in_key)
         step = self.stepHash(in_key)
         initial_pos = hash_idx
@@ -194,13 +187,13 @@ class DSAHashTable:
                 return -1
         return -1
 
-    def hash(self, in_key):
-        hash_idx = 0
-        for char in in_key:
-            hash_idx = (31 * hash_idx) + ord(char)
-        return abs(hash_idx % self.getCapacity())
+    def hash(self, inputKey):
+        hashID = 0
+        for char in inputKey:
+            hashID = (31 * hashID) + ord(char)
+        return abs(hashID % self.getCapacity()) # 
 
-    def stepHash(self, in_key): # secondary hash function
+    def stepHash(self, in_key): # secondary hash function - step size, 
         hash_val = self.hash(in_key)
         return self.STEP_HASH_MAX - (abs(hash_val) % self.STEP_HASH_MAX)
 
@@ -220,4 +213,3 @@ class DSAHashTable:
             if not is_prime:
                 prime_val += 2
         return prime_val
-

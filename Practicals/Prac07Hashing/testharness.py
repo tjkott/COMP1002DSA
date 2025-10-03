@@ -37,13 +37,13 @@ def main():
                 # Print a status update every 500 entries
                 if count % 500 == 0:
                     print(f"  Processed {count} entries. "
-                          f"Load Factor: {name_table.get_load_factor():.2f} "
-                          f"({name_table.get_count()}/{name_table.getCapacity()})")
+                          f"Load Factor: {name_table.getLoadFactor():.2f} "
+                          f"({name_table.getCount()}/{name_table.getCapacity()})")
     
     print("\n--- Hash Table Statistics After Loading ---")
-    print(f"Total unique entries loaded: {name_table.get_count()}")
+    print(f"Total unique entries loaded: {name_table.getCount()}")
     print(f"Final table capacity after expansion: {name_table.getCapacity()}")
-    print(f"Final load factor: {name_table.get_load_factor():.2f}")
+    print(f"Final load factor: {name_table.getLoadFactor():.2f}")
 
 
     # --- Phase 2: Remove data and demonstrate table SHRINKING ---
@@ -65,13 +65,13 @@ def main():
         # Print a status update every 500 removals
         if (i + 1) % 500 == 0:
             print(f"  Removed {i+1} entries. "
-                  f"Load Factor: {name_table.get_load_factor():.2f} "
-                  f"({name_table.get_count()}/{name_table.getCapacity()})")
+                  f"Load Factor: {name_table.getLoadFactor():.2f} "
+                  f"({name_table.getCount()}/{name_table.getCapacity()})")
 
     print("\n--- Hash Table Statistics After Removing ---")
-    print(f"Entries remaining: {name_table.get_count()}")
+    print(f"Entries remaining: {name_table.getCount()}")
     print(f"Final table capacity after shrinking: {name_table.getCapacity()}")
-    print(f"Final load factor: {name_table.get_load_factor():.2f}")
+    print(f"Final load factor: {name_table.getLoadFactor():.2f}")
 
     # --- Phase 3: Save the remaining hash table contents ---
     print("\n--- Phase 3: Saving remaining data to a new CSV ---")
