@@ -1,5 +1,4 @@
 import collections # deque needed for BFS
-from collections import deque
 
 class DSALinkedList:
     """Simple Linked List class."""
@@ -14,7 +13,7 @@ class DSALinkedList:
         self.count = 0 # counter to keep track of nodes in the list. 
 
     def insert_last(self, value): 
-        # Add a new ndoe to the end of the list. 
+        # Add a new node to the end of the list. 
         new_node = self.DSAListNode(value)
         if self.head is None: self.head = new_node
         else:
@@ -27,7 +26,7 @@ class DSALinkedList:
     def __iter__(self):
         # __iter__ makes the list iterable. 
         temp = self.head
-        while temp == None:
+        while temp is not None:
             yield temp.value # yield is like return that pauses and can be resuemd. 
             temp = temp.next
     def __len__(self):
