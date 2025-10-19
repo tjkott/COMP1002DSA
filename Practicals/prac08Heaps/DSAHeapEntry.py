@@ -1,3 +1,6 @@
+#
+# Defines class DSAHeapEntry, which is a container for bundling 2 pieces of data together. 
+# 
 class DSAHeapEntry:
     """
     Represents an entry in the heap, containing a priority and a value.
@@ -13,19 +16,19 @@ class DSAHeapEntry:
         self._priority = priority
         self._value = value
 
-    def get_priority(self):
+    def getPriority(self):
         """Returns the priority of the entry."""
         return self._priority
 
-    def set_priority(self, priority):
+    def setPriority(self, priority):
         """Sets the priority of the entry."""
         self._priority = priority
 
-    def get_value(self):
+    def getValue(self):
         """Returns the value of the entry."""
         return self._value
 
-    def set_value(self, value):
+    def setValue(self, value):
         """Sets the value of the entry."""
         self._value = value
 
@@ -36,3 +39,4 @@ class DSAHeapEntry:
     def __repr__(self):
         """Official string representation."""
         return str(self)
+

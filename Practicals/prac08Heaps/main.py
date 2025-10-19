@@ -1,8 +1,8 @@
 import csv
-from DSAHeap import DSAHeap, heap_sort
+from DSAHeap import DSAHeap, heapSort
 from DSAHeapEntry import DSAHeapEntry
 
-def load_data_from_csv(filename="RandomNames7000.csv"):
+def loadDataFromCsv(filename="RandomNames7000.csv"):
     """
     Loads data from the specified CSV file into a list of DSAHeapEntry objects.
     It reads the integer from the first column as priority and the name from the
@@ -30,7 +30,7 @@ def load_data_from_csv(filename="RandomNames7000.csv"):
         print(f"Error: The file '{filename}' was not found.")
     return entries
 
-def test_heap(data):
+def testHeap(data):
     """
     Tests the DSAHeap class by adding and removing elements.
     """
@@ -40,27 +40,27 @@ def test_heap(data):
     
     print("Adding elements to the heap...")
     for entry in data:
-        heap.add(entry.get_priority(), entry.get_value())
+        heap.add(entry.getPriority(), entry.getValue())
     
     print("\nHeap state after adding all elements:")
     heap.display()
     
     print("\nRemoving elements from heap (should be in descending priority order):")
-    removed_items = []
+    removedItems = []
     try:
         while True:
-            removed_items.append(heap.remove())
+            removedItems.append(heap.remove())
     except IndexError:
         # This is expected when the heap becomes empty
         pass
     
-    for item in removed_items:
+    for item in removedItems:
         print(item, end=" ")
     print("\n\nDSAHeap test complete.")
 
-def test_heapsort(data):
+def testHeapsort(data):
     """
-    Tests the heap_sort function.
+    Tests the heapSort function.
     """
     print("\n----- Testing HeapSort Implementation -----")
     print("Original array (first 10 elements):")
@@ -68,7 +68,7 @@ def test_heapsort(data):
         print(data[i], end=" ")
     print("\n")
 
-    heap_sort(data)
+    heapSort(data)
 
     print("Sorted array (first 10 elements):")
     for i in range(min(10, len(data))):
@@ -83,15 +83,16 @@ def test_heapsort(data):
 
 if __name__ == "__main__":
     # Load the data from the CSV file
-    heap_entries = load_data_from_csv()
+    heapEntries = loadDataFromCsv()
 
-    if heap_entries:
+    if heapEntries:
         # Create a copy for the heapsort test, as it sorts in-place
-        heap_entries_for_sort = list(heap_entries)
+        heapEntriesForSort = list(heapEntries)
         
         # Run the tests
-        test_heap(heap_entries)
-        test_heapsort(heap_entries_for_sort)
+        testHeap(heapEntries) # tests DSAHeap class. 
+        testHeapsort(heapEntriesForSort) # tests heapSort
     else:
         print("No data loaded. Cannot run tests.")
         print("Please ensure 'RandomNames7000.csv' is in the same directory.")
+
