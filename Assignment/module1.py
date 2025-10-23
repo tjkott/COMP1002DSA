@@ -8,7 +8,6 @@ import sys # Used for representing infinity in Dijkstra's algorithm
 """Source: Ihechikara. (2022, November 30). Dijkstra's algorithm – 
         Explained with a pseudocode example. freeCodeCamp. https://www.freecodecamp.org/news/dijkstras-algorithm-explained-with-a-pseudocode-example/"""
 
-
 class DSALinkedList:
     """
     A custom implementation of a Linked List to avoid using restricted built-in list types.
@@ -85,7 +84,7 @@ class DSAQueue:
 # Graph Implementation
 # -------------------------------------------------------------------------------------
 
-class DSAGraphVertex:
+class DSAGraphVertex: # represents a single "department". 
     """
     Each node in the graph corresponds to a department in the hospital. 
     Each vertex/node possess a label and an adjacency list of its connections.
@@ -127,17 +126,17 @@ class DSAGraph: ## Task 1, bullet 1: Implement a graph class.
     def __init__(self):
         self._vertices = DSALinkedList()
 
-    def addVertex(self, label):
+    def addVertex(self, label): ## Support dynamic insertion of departments (nodes) and corridors (weighted edges).
         """Adds a new department (vertex) to the graph if it doesn't already exist."""
         if not self.hasVertex(label):
             new_vertex = DSAGraphVertex(label)
             self._vertices.insertLast(new_vertex)
 
-    def addEdge(self, label1, label2, weight):
+    def addEdge(self, label1, label2, weight): ## Ensure undirected symmetry (u↔v with same weight). i.e. connection goes both ways/ 
         """Adds a weighted, undirected corridor (edge) between two departments."""
         self.addVertex(label1)
         self.addVertex(label2)
-        v1 = self.getVertex(label1)
+        v1 = self.getVertex(label1) 
         v2 = self.getVertex(label2)
         v1.addEdge(v2, weight)
         v2.addEdge(v1, weight) # Ensure symmetry for undirected graph
@@ -157,14 +156,8 @@ class DSAGraph: ## Task 1, bullet 1: Implement a graph class.
         """Helper method to reset the visited status of all vertices."""
         for vertex in self._vertices:
             vertex.clearVisited()
-    
-    def ResetDijkstraAttributes(self):
-        """Helper method to reset distance and predecessor for Dijkstra's algorithm."""
-        for vertex in self._vertices:
-            vertex._distance = sys.maxsize
-            vertex._predecessor = None
 
-    def displayAsList(self):
+    def displayAsList(self): ## Textual/visual graph structure. 
         """Displays the graph structure as an adjacency list with weights."""
         print("\n--- Hospital Adjacency List ---")
         for vertex in self._vertices:
@@ -184,7 +177,7 @@ class DSAGraph: ## Task 1, bullet 1: Implement a graph class.
 
     # --- Core Algorithms ---
 
-    def breadthFirstSearch(self, start_label):
+    def breadthFirstSearch(self, start_label): ## Breadth-First Search (BFS)
         """
         Performs a Breadth-First Search (BFS) from a starting department.
         Outputs all reachable departments grouped by their level (number of hops).
@@ -197,8 +190,8 @@ class DSAGraph: ## Task 1, bullet 1: Implement a graph class.
             print(f"Error: Department '{start_label}' not found.")
             return
 
-        q = DSAQueue()
-        q.enqueue(start_vertex)
+        q = DSAQueue() # use custom implemented queue. 
+        q.enqueue(start_vertex) 
         start_vertex.setVisited()
 
         # Using a None marker in the queue to separate levels
@@ -210,7 +203,7 @@ class DSAGraph: ## Task 1, bullet 1: Implement a graph class.
         while not q.isEmpty():
             current_vertex = q.dequeue()
 
-            if current_vertex is None:
+            if current_vertex is None: 
                 print(f"Level {level}: {level_output}")
                 level_output = ""
                 level += 1
@@ -225,24 +218,21 @@ class DSAGraph: ## Task 1, bullet 1: Implement a graph class.
                             level_output += f"{neighbor.getLabel()}"
                         else:
                             level_output += f", {neighbor.getLabel()}"
-        print("-----------------------------------")
 
-
-    def depthFirstSearchCycleDetect(self):
+    def depthFirstSearchCycleFind(self): ## DFS cycle detection (and cycle members if present). 
         """
         Performs a Depth-First Search (DFS) across the entire graph to detect cycles.
-        Reports the first cycle found and the nodes involved.
+        Returns the first cycle found and the nodes involved.
         """
-        print("\n--- DFS Cycle Detection ---")
         self.ClearAllVisited()
         # Using lists as sets to track visited nodes and the current path (recursion stack)
         visited = [] 
-        recursion_stack = []
+        recursion_stack = [] # tracks nodes in the path. 
         cycle_found = False
 
         for vertex in self._vertices:
             if vertex not in visited:
-                cycle_path = self.DfsCycleUtil(vertex, visited, recursion_stack)
+                cycle_path = self.DfsCycleHelper(vertex, visited, recursion_stack)
                 if cycle_path:
                     # Manually reverse and format the cycle path for printing
                     reversed_path = []
@@ -264,41 +254,46 @@ class DSAGraph: ## Task 1, bullet 1: Implement a graph class.
         print("---------------------------")
 
 
-    def DfsCycleUtil(self, vertex, visited, recursion_stack):
-        """Recursive helper for DFS cycle detection."""
+    def DfsCycleHelper(self, vertex, visited, recursionstack):
+        """Recursive helper for depthFirstSearchCycleFind function"""
         visited.append(vertex)
-        recursion_stack.append(vertex)
+        recursionstack.append(vertex) 
 
         for neighbor, _ in vertex.getAdjacent():
             if neighbor not in visited:
                 # Recurse and propagate the cycle path if found
-                path = self.DfsCycleUtil(neighbor, visited, recursion_stack)
+                path = self.DfsCycleHelper(neighbor, visited, recursionstack)
                 if path:
                     return path
-            elif neighbor in recursion_stack:
+            elif neighbor in recursionstack:
                 # Cycle detected. Find where it starts and build the path.
                 cycle_start_index = 0
-                for i, node in enumerate(recursion_stack):
+                for i, node in enumerate(recursionstack):
                     if node == neighbor:
                         cycle_start_index = i
                         break
                 
                 # Build path from the start of the cycle to the current node
                 path = [neighbor]
-                for i in range(cycle_start_index + 1, len(recursion_stack)):
-                    path.append(recursion_stack[i])
+                for i in range(cycle_start_index + 1, len(recursionstack)):
+                    path.append(recursionstack[i])
                 path.append(neighbor) # Close the loop
                 return path
 
-        recursion_stack.pop() # Backtrack
+        recursionstack.pop() # Backtrack
         return None
 
-    def dijkstraShortestPath(self, start_label, end_label):
+    def dijkstraAlgorithm(self, start_label, end_label):
+        ## Shortest Path Algorithm: Implement Dijkstra algorithm from a source; report
+        # path and total cost. Cite the algorithm source and implement from first principles
+        # without built-in shortest-path functions.
         """
-        Implements Dijkstra's algorithm to find the shortest path between two departments.
+        Dijkstra's algorithm. 
         """
         print(f"\n--- Shortest Path from '{start_label}' to '{end_label}' ---")
-        self.ResetDijkstraAttributes()
+        for vertex in self._vertices: # reset distance and predecessor node for all vertices. 
+            vertex._distance = sys.maxsize
+            vertex._predecessor = None
         
         start_vertex = self.getVertex(start_label)
         end_vertex = self.getVertex(end_label)
@@ -308,25 +303,25 @@ class DSAGraph: ## Task 1, bullet 1: Implement a graph class.
             return
 
         start_vertex._distance = 0
-        unvisited = list(self._vertices) # Create a list of all vertices to visit
+        unvisited = list(self._vertices) # Create a list of all vertices which need to be visted. 
 
         while unvisited:
             # Find vertex with smallest distance (manual priority queue)
             current_vertex = None
             min_dist = sys.maxsize
-            for v in unvisited:
-                if v._distance < min_dist:
-                    min_dist = v._distance
-                    current_vertex = v
+            for vertex in unvisited:
+                if vertex._distance < min_dist:
+                    min_dist = vertex._distance
+                    current_vertex = vertex
 
             if current_vertex is None or current_vertex._distance == sys.maxsize:
                 break # No path to remaining nodes
 
             # Manual removal from list to avoid restricted built-ins
             temp_unvisited = []
-            for v in unvisited:
-                if v != current_vertex:
-                    temp_unvisited.append(v)
+            for vertex in unvisited:
+                if vertex != current_vertex:
+                    temp_unvisited.append(vertex)
             unvisited = temp_unvisited
             
             # Relaxation step
@@ -354,41 +349,33 @@ class DSAGraph: ## Task 1, bullet 1: Implement a graph class.
             
             print(f"Path: {path_str}")
             print(f"Total walking time: {end_vertex._distance} minutes.")
-        print("--------------------------------------------------")
-
-# -------------------------------------------------------------------------------------
-# Main Program Execution
-# -------------------------------------------------------------------------------------
+        print("\n")
 
 def main():
     """Sets up the hospital graph and provides a menu to test the algorithms."""
     hospital_graph = DSAGraph()
 
-    # Task 3: Test Case Setup
+    ## 3) Test Case Setup
     # 8+ departments, 10-12 edges, one cycle, one isolated department.
-    departments = [
-        "Emergency", "ICU", "Pharmacy", "Radiology", "Laboratories",
-        "Operating Theatres", "Wards", "Outpatient Units", "Cafeteria"
-    ]
+    departments = ["Emergency", "ICU", "Pharmacy", "Radiology", "Laboratories",
+    "Operating Theatres", "Wards", "Outpatient Units", "Cafeteria"] ## At least 8 departments (nodes). 
     for dept in departments:
         hospital_graph.addVertex(dept)
     
-    # Add an isolated department
-    hospital_graph.addVertex("Morgue")
-
-    corridors = [
-        ("Emergency", "ICU", 4),
+    hospital_graph.addVertex("Morgue") ## and one isolated department. 
+    ## 10-12 weighted corridors (edges).
+    corridors = [("Emergency", "ICU", 4), ## Include at least one cycle
         ("Emergency", "Radiology", 2),
         ("Emergency", "Wards", 7),
         ("ICU", "Operating Theatres", 2),
-        ("ICU", "Pharmacy", 3), # This edge completes a cycle
+        ("ICU", "Pharmacy", 3), 
         ("Radiology", "Laboratories", 3),
         ("Laboratories", "Pharmacy", 2),
         ("Operating Theatres", "Wards", 2),
         ("Wards", "Outpatient Units", 5),
         ("Wards", "Cafeteria", 3),
-        ("Outpatient Units", "Cafeteria", 2)
-    ]
+        ("Outpatient Units", "Cafeteria", 2)]
+    
     for dept1, dept2, time in corridors:
         hospital_graph.addEdge(dept1, dept2, time)
 
@@ -402,15 +389,13 @@ def main():
     hospital_graph.breadthFirstSearch("Emergency")
 
     # Run DFS to find cycles
-    hospital_graph.depthFirstSearchCycleDetect()
+    hospital_graph.depthFirstSearchCycleFind()
 
     # Find and display a shortest path
-    hospital_graph.dijkstraShortestPath("Emergency", "Outpatient Units")
+    hospital_graph.dijkstraAlgorithm("Emergency", "Outpatient Units")
     
     # Example with no path
-    hospital_graph.dijkstraShortestPath("Emergency", "Morgue")
-
+    hospital_graph.dijkstraAlgorithm("Emergency", "Morgue")
 
 if __name__ == "__main__":
     main()
-
