@@ -1,0 +1,22 @@
+patient_id,name,age,department,urgency_level,treatment_status
+101,John Smith,45,Cardiology,2,Admitted
+213,Jane Doe,32,Neurology,1,Admitted
+112,Peter Jones,67,Oncology,3,Admitted
+304,Mary Williams,28,Emergency,1,Admitted
+451,David Brown,55,Orthopedics,4,Admitted
+522,Susan Miller,71,Geriatrics,5,Admitted
+633,Robert Wilson,39,Pediatrics,2,Admitted
+745,Linda Garcia,50,Emergency,1,Admitted
+819,Michael Martinez,62,Cardiology,3,Admitted
+901,Karen Rodriguez,48,Neurology,2,Admitted
+1010,James Lee,33,Oncology,4,Admitted
+1123,Patricia Harris,76,Geriatrics,5,Admitted
+1245,Charles Clark,22,Emergency,1,Admitted
+1366,Barbara Lewis,58,Orthopedics,3,Admitted
+1482,Thomas Walker,41,Pediatrics,2,Admitted
+1599,Jessica Hall,30,Cardiology,1,Admitted
+1602,Daniel Allen,65,Neurology,4,Admitted
+1734,Nancy Young,53,Oncology,5,Admitted
+1851,Mark Hernandez,29,Emergency,2,Admitted
+1977,Betty King,80,Geriatrics,4,Admitted
+2088,Steven Wright,47,Orthopedics,3,Admitted

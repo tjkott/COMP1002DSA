@@ -80,10 +80,6 @@ class DSAQueue:
         """Checks if the queue is empty."""
         return self._list.isEmpty()
 
-# -------------------------------------------------------------------------------------
-# Graph Implementation
-# -------------------------------------------------------------------------------------
-
 class DSAGraphVertex: # represents a single "department". 
     """
     Each node in the graph corresponds to a department in the hospital. 
@@ -175,7 +171,6 @@ class DSAGraph: ## Task 1, bullet 1: Implement a graph class.
             print(f"{vertex.getLabel():<18} | {adj_str}")
         print("---------------------------------")
 
-    # --- Core Algorithms ---
 
     def breadthFirstSearch(self, start_label): ## Breadth-First Search (BFS)
         """

@@ -2,10 +2,28 @@ import math
 
 # =====================================================================================
 # MODULE 2: Hash-Based Patient Lookup
-# Student: Thejana Kottawatta Hewage
-# ID: 22307822
+# Student: [Your Name]
+# ID: [Your ID]
 # =====================================================================================
 
+# -------------------------------------------------------------------------------------
+# Justification of Design Choices (as required by deliverables)
+# -------------------------------------------------------------------------------------
+# 1. Collision Handling Strategy: Chaining
+#    - Chaining with linked lists was chosen over open addressing (linear probing).
+#    - Reason: Chaining is simpler to implement, especially for deletion (no need
+#      for a "formerly used" state). It also handles high load factors more
+#      gracefully; performance degrades per-slot rather than across the entire
+#      table due to clustering, which is a common issue with linear probing.
+#
+# 2. Hash Function & Table Size: Modulo with Prime Number
+#    - Hash Function: A simple character-based hash is used (sum of ASCII values
+#      of the patient ID). It's fast and sufficient for this application.
+#    - Table Size: The table size is always set to the next prime number greater
+#      than the requested capacity. Using a prime number helps distribute keys
+#      more uniformly when using the modulo operator, significantly reducing
+#      the number of initial collisions.
+# -------------------------------------------------------------------------------------
 
 
 # -------------------------------------------------------------------------------------
@@ -95,28 +113,30 @@ class DSAHashTable:
 
     def __init__(self, initial_size=23): # Start with a prime number
         self.capacity = self.FindNextPrime(initial_size)
-        self.table = [DSALinkedList() for _ in range(self.capacity)]
+
+        self.table = [DSALinkedList() for _ in range(self.capacity)] 
         self.count = 0
-        self.maxloadfactor = 0.7
+        self.max_load_factor = 0.7
 
     def Hash(self, key):
         """A simple modulo-based hash function."""
-        # Convert integer key to string to process its digits
         key_str = str(key)
         hash_val = 0
         for char in key_str:
             hash_val = (31 * hash_val) + ord(char)
+        ## Implement a simple modulo-based hash function; explain parameter choices 
+        # (table size, prime selection). 
         return abs(hash_val % self.capacity)
-
+    
+    ## 2) Core operations
     def insert(self, record):
         """Inserts a PatientRecord into the hash table. Handles duplicates by updating."""
-        # Task 3: Optional resizing implementation
-        if self.getLoadFactor() > self.maxloadfactor:
+        if self.getLoadFactor() > self.max_load_factor:
             self.Resize()
 
         index = self.Hash(record.patientID)
         chain = self.table[index]
-        op_count = 0 # To measure efficiency
+        op_count = 0
 
         # Check for duplicates
         for existing_record in chain:
@@ -138,6 +158,7 @@ class DSAHashTable:
 
     def search(self, patientID):
         """Searches for a patient by their ID and returns the full record."""
+        ## search(patientID): O(1) expected; return the full patient record or a not-found message. 
         index = self.Hash(patientID)
         chain = self.table[index]
         op_count = 0
@@ -145,7 +166,7 @@ class DSAHashTable:
         for record in chain:
             op_count += 1
             if record.patientID == patientID:
-                print(f"SEARCH HIT: Found Patient {patientID} at index {index}. (Chain traversal: {op_count} hops)")
+                print(f"Found Patient {patientID} at index {index}. (Chain traversal: {op_count} hops)")
                 return record
 
         print(f"SEARCH MISS: Patient {patientID} not found. (Chain traversal: {op_count} hops)")
@@ -188,12 +209,12 @@ class DSAHashTable:
         old_table = self.table
         new_capacity = self.FindNextPrime(self.capacity * 2)
         
-        print(f"\nRESIZING: Load factor > {self.maxloadfactor}. "
+        print(f"\nRESIZING: Load factor > {self.max_load_factor}. "
               f"Resizing from {self.capacity} to {new_capacity}.\n")
 
         # Reset the current table
         self.capacity = new_capacity
-        self.table = [DSALinkedList() for _ in range(self.capacity)]
+        self.table = [DSALinkedList() for _ in range(self.capacity)] # 
         self.count = 0
 
         # Re-hash all records from the old table
@@ -218,6 +239,10 @@ class DSAHashTable:
                 return prime_val
             prime_val += 2
 
+# -------------------------------------------------------------------------------------
+# Test Driver
+# -------------------------------------------------------------------------------------
+
 def main():
     """Test driver to demonstrate all hash table functionalities."""
     print("=====================================================")
@@ -227,7 +252,7 @@ def main():
     # Initialize with a small prime size to easily demonstrate collisions and resizing
     patient_table = DSAHashTable(initial_size=11)
 
-    ## Insert at least 20 patient records [5. Testing requirements]
+    # Task 5: Insert at least 20 patient records
     patients_to_add = [
         PatientRecord(101, "John Smith", 45, "Cardiology", 2),
         PatientRecord(213, "Jane Doe", 32, "Neurology", 1),
@@ -291,7 +316,7 @@ def main():
     print("supporting the expected O(1) average time complexity. The worst-case for a single")
     print("operation would be O(n) if all keys hashed to the same index.")
     print("\nLoad Factor Behaviour: The table began with a capacity of 11 and was resized to 23")
-    print(f"when the load factor exceeded the threshold of {patient_table.maxloadfactor}, ensuring that chains")
+    print(f"when the load factor exceeded the threshold of {patient_table.max_load_factor}, ensuring that chains")
     print("remain short and performance remains high.")
     print("=====================================================")
 

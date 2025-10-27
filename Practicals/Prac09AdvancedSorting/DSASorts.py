@@ -64,14 +64,15 @@ def mergeSort(A):
     """ 
     mergeSort - front-end for kick-starting the recursive algorithm. 
     """
-    _mergeSortRecurse(A, 0, len(A) - 1)
+    _mergeSortRec(A, 0, len(A) - 1)
 
-def _mergeSortRecurse(A, leftIdx, rightIdx):
+## private methods ##
+def _mergeSortRec(A, leftIdx, rightIdx):
     """ Recursive helper function for merge sort. """
     if leftIdx < rightIdx:
         midIdx = (leftIdx + rightIdx) // 2
-        _mergeSortRecurse(A, leftIdx, midIdx)
-        _mergeSortRecurse(A, midIdx + 1, rightIdx)
+        _mergeSortRec(A, leftIdx, midIdx)
+        _mergeSortRec(A, midIdx + 1, rightIdx)
         _merge(A, leftIdx, midIdx, rightIdx)
 
 def _merge(A, leftIdx, midIdx, rightIdx):
@@ -113,23 +114,23 @@ def quickSort(A):
     quickSort - front-end for the recursive algorithm.
     This implementation uses the left-most element as the pivot.
     """
-    _quickSortRecurse(A, 0, len(A) - 1, "LEFT")
+    _quickSortRec(A, 0, len(A) - 1, "LEFT")
 
 def quickSortMedian3(A):
     """ 
     quickSortMedian3 - front-end for the recursive algorithm.
     This implementation uses the median-of-three as the pivot.
     """
-    _quickSortRecurse(A, 0, len(A) - 1, "MEDIAN")
+    _quickSortRec(A, 0, len(A) - 1, "MEDIAN")
 
 def quickSortRandom(A):
     """ 
     quickSortRandom - front-end for the recursive algorithm.
     This implementation uses a random element as the pivot.
     """
-    _quickSortRecurse(A, 0, len(A) - 1, "RANDOM")
+    _quickSortRec(A, 0, len(A) - 1, "RANDOM")
 
-def _quickSortRecurse(A, leftIdx, rightIdx, pivotStrategy):
+def _quickSortRec(A, leftIdx, rightIdx, pivotStrategy):
     """ Recursive helper function for quick sort. """
     if rightIdx > leftIdx:
         pivotIdx = 0
@@ -149,12 +150,12 @@ def _quickSortRecurse(A, leftIdx, rightIdx, pivotStrategy):
         if pivotStrategy != "LEFT" and pivotStrategy != "RANDOM" and pivotStrategy != "MEDIAN":
              pivotIdx = leftIdx # Default to left pivot if strategy is unknown
 
-        newPivotIdx = _doPartitioning(A, leftIdx, rightIdx, pivotIdx)
+        newPivotIdx = _partitioning(A, leftIdx, rightIdx, pivotIdx)
         
-        _quickSortRecurse(A, leftIdx, newPivotIdx - 1, pivotStrategy)
-        _quickSortRecurse(A, newPivotIdx + 1, rightIdx, pivotStrategy)
+        _quickSortRec(A, leftIdx, newPivotIdx - 1, pivotStrategy)
+        _quickSortRec(A, newPivotIdx + 1, rightIdx, pivotStrategy)
 
-def _doPartitioning(A, leftIdx, rightIdx, pivotIdx):
+def _partitioning(A, leftIdx, rightIdx, pivotIdx):
     """ 
     Partitions the array such that elements smaller than the pivot are on its left,
     and elements larger are on its right.
