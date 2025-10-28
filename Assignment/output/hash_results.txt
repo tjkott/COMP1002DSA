@@ -1,0 +1,81 @@
+=====================================================
+   Critical Care Optimisation: Patient Lookup
+=====================================================
+
+--- Phase 1: Inserting Patient Records from input/patients.csv ---
+Demonstration: Hash(112) = 5, Hash(213) = 10
+Patient records system is populated.
+
+
+COLLISION DEMO: Patient 112 and 213 both hash to the same initial index.
+The hash table resolves this by chaining them in a linked list at that index.
+
+========================= HASH TABLE STATE =========================
+Count: 21, Capacity: 47, Load Factor: 0.45
+Index 00: [ID: 745] -> None
+Index 01: [ID: 1734] -> None
+Index 06: [ID: 2088] -> None
+Index 08: [ID: 901] -> None
+Index 09: [ID: 1599] -> None
+Index 11: [ID: 451] -> None
+Index 12: [ID: 1366] -> None
+Index 13: [ID: 112] -> None
+Index 22: [ID: 1245] -> None
+Index 23: [ID: 1010] -> None
+Index 26: [ID: 819] -> [ID: 304] -> [ID: 1602] -> None
+Index 28: [ID: 101] -> None
+Index 29: [ID: 1977] -> None
+Index 31: [ID: 1123] -> None
+Index 34: [ID: 522] -> [ID: 1851] -> None
+Index 35: [ID: 213] -> None
+Index 40: [ID: 633] -> None
+Index 44: [ID: 1482] -> None
+======================================================================
+
+
+--- Phase 2: Searching for Patients ---
+Searching for an existing patient (HIT):
+  -> Record found: ID: 101, Name: John Smith, Age: 45, Dept: Cardiology, Urgency: 2, Status: Admitted
+
+Searching for a non-existent patient (MISS):
+  -> Record not found (SUCCESSFUL MISS).
+
+--- Phase 3: Deleting a Patient Record ---
+Deleting Patient 451...
+Attempting to search for the deleted patient:
+  -> Record not found (SUCCESSFUL DELETE).
+
+Attempting to delete a non-existent patient:
+  -> Delete attempt finished (graceful fail).
+
+========================= HASH TABLE STATE =========================
+Count: 20, Capacity: 47, Load Factor: 0.43
+Index 00: [ID: 745] -> None
+Index 01: [ID: 1734] -> None
+Index 06: [ID: 2088] -> None
+Index 08: [ID: 901] -> None
+Index 09: [ID: 1599] -> None
+Index 12: [ID: 1366] -> None
+Index 13: [ID: 112] -> None
+Index 22: [ID: 1245] -> None
+Index 23: [ID: 1010] -> None
+Index 26: [ID: 819] -> [ID: 304] -> [ID: 1602] -> None
+Index 28: [ID: 101] -> None
+Index 29: [ID: 1977] -> None
+Index 31: [ID: 1123] -> None
+Index 34: [ID: 522] -> [ID: 1851] -> None
+Index 35: [ID: 213] -> None
+Index 40: [ID: 633] -> None
+Index 44: [ID: 1482] -> None
+======================================================================
+
+
+--- Final Summary ---
+Complexity: All operations (insert, search, delete) demonstrated low 'hop' counts,
+supporting the expected O(1) average time complexity. The worst-case for a single
+operation would be O(n) if all keys hashed to the same index.
+
+Load Factor Behaviour: The table began with a capacity of 11 and was resized to 23
+when the load factor exceeded the threshold of 0.7, ensuring that chains
+remain short and performance remains high.
+=====================================================

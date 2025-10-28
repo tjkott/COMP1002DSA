@@ -2,6 +2,7 @@ import math
 import sys
 import csv
 import os
+from contextlib import redirect_stdout
 
 # =====================================================================================
 # MODULE 3: Heap-Based Emergency Scheduling
@@ -389,110 +390,133 @@ class DSAEmergencyHeap:
 # MODULE 3: TEST DRIVER
 # =====================================================================================
 
+# =====================================================================================
+# MODULE 3: TEST DRIVER
+# =====================================================================================
+
 def main():
-    print("=====================================================")
-    print("   Critical Care Optimisation: Emergency Scheduler")
-    print("=====================================================\n")
+    # --- 1. Setup File Output ---
+    output_dir = "output"
+    output_file = os.path.join(output_dir, "heap_results.txt")
 
-    # --- Define File Paths ---
-    # We define the directory path and the two input filenames
-    input_dir = "Assignment/input"
-    patient_file = os.path.join(input_dir, "patients.csv")
-    requests_file = os.path.join(input_dir, "requests.csv")
+    # Create the directory if it doesn't exist
+    os.makedirs(output_dir, exist_ok=True) 
 
-    # --- 1. Setup (Integrate with Module 2) ---
-    print(f"--- Phase 1: Initializing Patient Records from {patient_file} ---")
-    patient_table = DSAHashTable(initial_size=23)
-    
-    try:
-        # Use csv.DictReader to read the patient CSV by its header names
-        with open(patient_file, mode='r', encoding='utf-8') as file:
-            reader = csv.DictReader(file)
-            for row in reader:
-                try:
-                    # Convert data from string to the correct type (int)
-                    new_patient = PatientRecord(
-                        patient_id=int(row['patient_id']),
-                        name=row['name'],
-                        age=int(row['age']),
-                        department=row['department'],
-                        urgency_level=int(row['urgency_level']),
-                        treatment_status=row['treatment_status']
-                    )
-                    patient_table.insert(new_patient)
-                except ValueError as e:
-                    print(f"  Skipping row due to data error: {e} -> {row}")
-                except KeyError as e:
-                    print(f"  Skipping row due to missing CSV header: {e}")
-        print("Patient records system is populated.\n")
+    # This print() will go to the terminal *before* the redirect
+    print(f"Starting heap scheduler... Output will be saved to {output_file}")
 
-    except FileNotFoundError:
-        print(f"FATAL ERROR: Could not find patient file at '{patient_file}'.")
-        print("Please ensure the file exists in the 'Assignment/input' directory.")
-        return # Exit the program
-    except Exception as e:
-        print(f"An unexpected error occurred reading {patient_file}: {e}")
-        return
+    # --- 2. Redirect all stdout (print statements) to the file ---
+    with open(output_file, 'w', encoding='utf-8') as f:
+        with redirect_stdout(f):
 
-    # --- 2. Insert 10 Requests (Task 4) ---
-    print(f"--- Phase 2: Inserting 10 Emergency Requests from {requests_file} ---")
-    scheduler = DSAEmergencyHeap(max_size=20)
-    
-    try:
-        # Use csv.DictReader to read the requests CSV
-        with open(requests_file, mode='r', encoding='utf-8') as file:
-            reader = csv.DictReader(file)
-            for row in reader:
-                try:
-                    # Convert data from string to integer
-                    p_id = int(row['patient_id'])
-                    t_time = int(row['treatment_time'])
-                    scheduler.insert(p_id, t_time, patient_table)
-                except ValueError as e:
-                    print(f"  Skipping request due to data error: {e} -> {row}")
-                except KeyError as e:
-                    print(f"  Skipping request due to missing CSV header: {e}")
-
-    except FileNotFoundError:
-        print(f"FATAL ERROR: Could not find request file at '{requests_file}'.")
-        print("Please ensure the file exists in the 'Assignment/input' directory.")
-        return # Exit the program
-    except Exception as e:
-        print(f"An unexpected error occurred reading {requests_file}: {e}")
-        return
-
-    # --- 3. Edge Case Handling (Kept from original) ---
-    # These are good to keep to prove your validation still works
-    print("\n--- Phase 3: Edge Case Handling ---")
-    # Invalid Patient ID
-    scheduler.insert(patient_id=999, treatment_time=30, patient_table=patient_table)
-    # Invalid Treatment Time
-    scheduler.insert(patient_id=101, treatment_time=0, patient_table=patient_table)
-    
-    # Patient not 'Admitted' (demonstrate by deleting them first)
-    print("\n(Demo: Deleting patient 1010 from records...)")
-    patient_table.delete(1010) # 1010 was loaded from the CSV
-    scheduler.insert(patient_id=1010, treatment_time=30, patient_table=patient_table)
-    print("-" * 70) 
-
-    # --- 4. Extract 5 Requests (Task 4) ---
-    print("\n--- Phase 4: Extracting Top 5 Priority Patients ---")
-    print("Expected order: 112(103.0), 745(71.7), 304(55.0), 633(44.0), 101(37.3)")
-    print("-" * 70) 
-    
-    for i in range(5):
-        print(f"Extracting patient {i+1}...")
-        request = scheduler.extract_priority()
-        if request is None:
-            print("Scheduler is empty, stopping extraction.")
-            break
+            # --- All original main() code is now indented below ---
             
-    print("\n--- Final Summary ---")
-    print("Evidence: The extraction log clearly shows that patients with the highest")
-    print("computed priority scores (e.g., 103.0, 71.7) were extracted first,")
-    print("regardless of the order they were inserted. This confirms the Max Heap")
-    print("is correctly prioritizing cases based on the defined metric.")
-    print("=====================================================")
+            print("=====================================================", flush=True)
+            print("   Critical Care Optimisation: Emergency Scheduler", flush=True)
+            print("=====================================================\n", flush=True)
+        
+            # --- Define File Paths ---
+            input_dir = "input" # Using the "input" directory as in your example
+            patient_file = os.path.join(input_dir, "patients.csv")
+            requests_file = os.path.join(input_dir, "requests.csv")
+        
+            # --- 1. Setup (Integrate with Module 2) ---
+            print(f"--- Phase 1: Initializing Patient Records from {patient_file} ---", flush=True)
+            patient_table = DSAHashTable(initial_size=23)
+            
+            try:
+                # Use csv.DictReader to read the patient CSV by its header names
+                with open(patient_file, mode='r', encoding='utf-8') as file:
+                    reader = csv.DictReader(file)
+                    for row in reader:
+                        try:
+                            # Convert data from string to the correct type (int)
+                            new_patient = PatientRecord(
+                                patient_id=int(row['patient_id']),
+                                name=row['name'],
+                                age=int(row['age']),
+                                department=row['department'],
+                                UrgencyLevel=int(row['urgency_level']),   # <-- Using corrected PascalCase
+                                TreatmentStatus=row['treatment_status'] # <-- Using corrected PascalCase
+                            )
+                            patient_table.insert(new_patient)
+                        except ValueError as e:
+                            print(f"  Skipping row due to data error: {e} -> {row}", flush=True)
+                        except KeyError as e:
+                            print(f"  Skipping row due to missing CSV header: {e}", flush=True)
+                print("Patient records system is populated.\n", flush=True)
+        
+            except FileNotFoundError:
+                print(f"FATAL ERROR: Could not find patient file at '{patient_file}'.", flush=True)
+                print("Please ensure the file exists in the 'input' directory.", flush=True)
+                return # Exit the program
+            except Exception as e:
+                print(f"An unexpected error occurred reading {patient_file}: {e}", flush=True)
+                return
+        
+            # --- 2. Insert 10 Requests (Task 4) ---
+            print(f"--- Phase 2: Inserting 10 Emergency Requests from {requests_file} ---", flush=True)
+            scheduler = DSAEmergencyHeap(max_size=20)
+            
+            try:
+                # Use csv.DictReader to read the requests CSV
+                with open(requests_file, mode='r', encoding='utf-8') as file:
+                    reader = csv.DictReader(file)
+                    for row in reader:
+                        try:
+                            # Convert data from string to integer
+                            p_id = int(row['patient_id'])
+                            t_time = int(row['treatment_time'])
+                            scheduler.insert(p_id, t_time, patient_table)
+                        except ValueError as e:
+                            print(f"  Skipping request due to data error: {e} -> {row}", flush=True)
+                        except KeyError as e:
+                            print(f"  Skipping request due to missing CSV header: {e}", flush=True)
+        
+            except FileNotFoundError:
+                print(f"FATAL ERROR: Could not find request file at '{requests_file}'.", flush=True)
+                print("Please ensure the file exists in the 'input' directory.", flush=True)
+                return # Exit the program
+            except Exception as e:
+                print(f"An unexpected error occurred reading {requests_file}: {e}", flush=True)
+                return
+        
+            # --- 3. Edge Case Handling (Kept from original) ---
+            # These are good to keep to prove your validation still works
+            print("\n--- Phase 3: Edge Case Handling ---", flush=True)
+            # Invalid Patient ID
+            scheduler.insert(patient_id=999, treatment_time=30, patient_table=patient_table)
+            # Invalid Treatment Time
+            scheduler.insert(patient_id=101, treatment_time=0, patient_table=patient_table)
+            
+            # Patient not 'Admitted' (demonstrate by deleting them first)
+            print("\n(Demo: Deleting patient 1010 from records...)", flush=True)
+            patient_table.delete(1010) # 1010 was loaded from the CSV
+            scheduler.insert(patient_id=1010, treatment_time=30, patient_table=patient_table)
+            print("-" * 70, flush=True) 
+        
+            # --- 4. Extract 5 Requests (Task 4) ---
+            print("\n--- Phase 4: Extracting Top 5 Priority Patients ---", flush=True)
+            print("Expected order: 112(103.0), 745(71.7), 304(55.0), 633(44.0), 101(37.3)", flush=True)
+            print("-" * 70, flush=True) 
+            
+            for i in range(5):
+                print(f"\nExtracting patient {i+1}...", flush=True)
+                request = scheduler.extract_priority()
+                if request is None:
+                    print("Scheduler is empty, stopping extraction.", flush=True)
+                    break
+                    
+            print("\n--- Final Summary ---", flush=True)
+            print("Evidence: The extraction log clearly shows that patients with the highest", flush=True)
+            print("computed priority scores (e.g., 103.0, 71.7) were extracted first,", flush=True)
+            print("regardless of the order they were inserted. This confirms the Max Heap", flush=True)
+            print("is correctly prioritizing cases based on the defined metric.", flush=True)
+            print("=====================================================", flush=True)
+            # --- End of indented code ---
+            
+    # --- 3. This print() will go to the terminal *after* the redirect ---
+    print(f"Heap scheduler complete. Results saved to {output_file}")
 
 
 if __name__ == "__main__":

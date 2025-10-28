@@ -1,5 +1,6 @@
 import time
 import random
+import os
 import sys
 
 # =====================================================================================
@@ -363,36 +364,55 @@ class Benchmark:
         return True
 
     def DisplayResults(self):
-        """Prints the collected benchmark data in a formatted table."""
-        print("\n" + "="*86)
-        print("--- Sorting Algorithm Benchmark Results ---")
-        print("="*86)
-        print(f"{'Algorithm':<12} | {'Condition':<18} | {'Size':<6} | {'Time (ms)':<10} | "
-              f"{'Comparisons':<12} | {'Swaps':<12} | {'Passed'}")
-        print("-"*86)
+        """Builds the benchmark results table as a list of strings."""
+        output = []
+        
+        table_width = 86
+        header = "\n" + "="*table_width
+        header += "\n--- Sorting Algorithm Benchmark Results ---"
+        header += "\n" + "="*table_width
+        output.append(header)
+        
+        cols = f"{'Algorithm':<12} | {'Condition':<18} | {'Size':<6} | {'Time (ms)':<10} | " \
+               f"{'Comparisons':<12} | {'Swaps':<12} | {'Passed'}"
+        output.append(cols)
+        output.append("-"*table_width)
         
         for res in self.results:
-            print(f"{res['Algorithm']:<12} | {res['Condition']:<18} | {res['Size']:<6} | "
-                  f"{res['Time (ms)']:<10.3f} | {res['Stats']!s} | {res['Passed']}")
-        print("="*86)
+            row = f"{res['Algorithm']:<12} | {res['Condition']:<18} | {res['Size']:<6} | " \
+                  f"{res['Time (ms)']:<10.3f} | {res['Stats']!s} | {res['Passed']}"
+            output.append(row)
+            
+        output.append("="*table_width)
+        return output
+
+# -------------------------------------------------------------------------------------
+# MAIN TEST DRIVER
+# -------------------------------------------------------------------------------------
 
 # -------------------------------------------------------------------------------------
 # MAIN TEST DRIVER
 # -------------------------------------------------------------------------------------
 
 def main():
-    """Runs the full benchmark for Module 4."""
+    """
+    Runs the full benchmark for Module 4, captures all output,
+    then prints it to the terminal AND saves it to a file.
+    """
     
-    SEED = 42
+    # This list will capture all our output
+    output_log = []
+    
+    Seed = 41 ## Use deterministic random seeds for reproducibility.
     sizes = [100, 500, 1000] ## Generate and sort datasets of size 100, 500, and 1000.
     
-    generator = DataGenerator(SEED)
+    generator = DataGenerator(Seed) # pass the seed to data gen
     benchmark = Benchmark()
 
     # --- Print Sample Output ---
-    print("--- 1. Sample Sort Output (Size=100, Random) ---")
+    output_log.append("--- 1. Sample Sort Output (Size=100, Random) ---")
     sample_data = generator.GetRandom(100)
-    print(f"Original (first 10): {[f'{r.duration}m' for r in sample_data[:10]]}")
+    output_log.append(f"Original (first 10): {[f'{r.duration}m' for r in sample_data[:10]]}")
     
     # Create a copy for the sample sort
     sorted_sample_copy = []
@@ -402,14 +422,14 @@ def main():
     # Run the in-place sort on the copy
     mergeSort(sorted_sample_copy, SortStats()) 
     
-    print(f"Sorted (first 10):   {[f'{r.duration}m' for r in sorted_sample_copy[:10]]}")
-    print(f"Sorted (last 10):    {[f'{r.duration}m' for r in sorted_sample_copy[-10:]]}")
+    output_log.append(f"Sorted (first 10):   {[f'{r.duration}m' for r in sorted_sample_copy[:10]]}")
+    output_log.append(f"Sorted (last 10):    {[f'{r.duration}m' for r in sorted_sample_copy[-10:]]}")
 
     # --- Run Full Benchmark ---
-    print("\n--- 2. Running Full Benchmark ---")
+    output_log.append("\n--- 2. Running Full Benchmark ---")
     
     for size in sizes:
-        print(f"Generating and testing datasets for size {size}...")
+        output_log.append(f"Generating and testing datasets for size {size}...")
         ##  For each size, test three conditions: random, nearly sorted (≤10% elements displaced), and reversed. 
         datasets = {"Random": generator.GetRandom(size),
             "Reversed": generator.GetReversed(size),
@@ -420,24 +440,47 @@ def main():
             benchmark.Run(quickSortMedian3, data, "Quick Sort", f"{condition_name}") 
 
     # --- Display Results Table ---
-    benchmark.DisplayResults()
+    # Add the formatted table (which is now a list of strings) to our log
+    table_strings = benchmark.DisplayResults()
+    output_log.extend(table_strings)
     
     # --- Final Analysis ---
-    print("\n--- 3. Benchmark Analysis ---")
-    print("Merge Sort (In-Place):")
-    print(" - Consistent $O(n log n)$ performance. Time scales predictably with size.")
-    print(" - Performance is almost identical for Random, Reversed, and Nearly Sorted data,")
-    print("   proving it is not vulnerable to input order. Swaps are 0 as it copies.")
-    print("\nQuick Sort (Median-of-Three):")
-    print(" - Fastest on average (especially for Random and Nearly Sorted data).")
-    print(" - The Mo3 pivot strategy successfully prevented $O(n^2)$ behavior on Reversed")
-    print("   and Nearly Sorted lists, keeping performance at $O(n log n).")
-    print(" - Shows the highest number of swaps, as it works in-place.")
-    print("\nConclusion:")
-    print(" - For general-purpose sorting, QuickSort (with Mo3) is fastest.")
-    print(" - If stability is required (preserving order of 30m, 30m), Merge Sort is the only choice.")
-    print(" - If predictable, worst-case performance is critical, Merge Sort is safer.")
-    print("=====================================================")
+    output_log.append("\n--- 3. Benchmark Analysis ---")
+    output_log.append("Merge Sort (In-Place):")
+    output_log.append(" - Consistent $O(n log n)$ performance. Time scales predictably with size.")
+    output_log.append(" - Performance is almost identical for Random, Reversed, and Nearly Sorted data,")
+    output_log.append("   proving it is not vulnerable to input order. Swaps are 0 as it copies.")
+    output_log.append("\nQuick Sort (Median-of-Three):")
+    output_log.append(" - Fastest on average (especially for Random and Nearly Sorted data).")
+    output_log.append(" - The Mo3 pivot strategy successfully prevented $O(n^2)$ behavior on Reversed")
+    output_log.append("   and Nearly Sorted lists, keeping performance at $O(n log n).")
+    output_log.append(" - Shows the highest number of swaps, as it works in-place.")
+    output_log.append("\nConclusion:")
+    output_log.append(" - For general-purpose sorting, QuickSort (with Mo3) is fastest.")
+    output_log.append(" - If stability is required (preserving order of 30m, 30m), Merge Sort is the only choice.")
+    output_log.append(" - If predictable, worst-case performance is critical, Merge Sort is safer.")
+    output_log.append("=====================================================")
+
+    # --- 3. Join all output and save/print ---
+    
+    # Combine the list of strings into one single string
+    final_output_string = "\n".join(output_log)
+
+    # 3a. Print the final output to the terminal
+    print(final_output_string)
+
+    # 3b. Save the final output to the file "as well"
+    output_dir = "output"
+    output_file = os.path.join(output_dir, "benchmark_results.txt")
+    
+    try:
+        os.makedirs(output_dir, exist_ok=True)
+        with open(output_file, 'w', encoding='utf-8') as f:
+            f.write(final_output_string)
+        print(f"\nBenchmark complete. Results also saved to {output_file}")
+    except Exception as e:
+        print(f"\nError: Could not save results file to {output_file}")
+        print(f"Details: {e}")
 
 
 if __name__ == "__main__":

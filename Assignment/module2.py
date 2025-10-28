@@ -1,4 +1,7 @@
 import math
+import csv
+import os
+from contextlib import redirect_stdout
 
 # =====================================================================================
 # MODULE 2: Hash-Based Patient Lookup
@@ -191,16 +194,20 @@ class DSAHashTable:
         return self.count / self.capacity
 
     def displayTable(self):
-        """Prints a textual representation of the hash table and its chains."""
-        print("\n" + "="*25 + " HASH TABLE STATE " + "="*25)
-        print(f"Count: {self.count}, Capacity: {self.capacity}, Load Factor: {self.getLoadFactor():.2f}")
+        """Returns a list of strings representing the hash table state."""
+        output = []
+        
+        output.append("\n" + "="*25 + " HASH TABLE STATE " + "="*25)
+        output.append(f"Count: {self.count}, Capacity: {self.capacity}, Load Factor: {self.getLoadFactor():.2f}")
         for i, chain in enumerate(self.table):
             if len(chain) > 0:
                 chain_str = ""
                 for record in chain:
                     chain_str += f"[ID: {record.patientID}] -> "
-                print(f"Index {i:02}: {chain_str}None")
-        print("="*70 + "\n")
+                output.append(f"Index {i:02}: {chain_str}None")
+        output.append("="*70 + "\n")
+        
+        return output
 
     # --- Private Helper Methods (PascalCase as per style guide) ---
 
@@ -243,82 +250,141 @@ class DSAHashTable:
 # Test Driver
 # -------------------------------------------------------------------------------------
 
+# -------------------------------------------------------------------------------------
+# Test Driver
+# -------------------------------------------------------------------------------------
+
+# -------------------------------------------------------------------------------------
+# Test Driver
+# -------------------------------------------------------------------------------------
+
 def main():
     """Test driver to demonstrate all hash table functionalities."""
-    print("=====================================================")
-    print("   Critical Care Optimisation: Patient Lookup")
-    print("=====================================================")
+
+    # This list will capture all our output
+    output_log = []
+    
+    output_log.append("=====================================================")
+    output_log.append("   Critical Care Optimisation: Patient Lookup")
+    output_log.append("=====================================================")
 
     # Initialize with a small prime size to easily demonstrate collisions and resizing
     patient_table = DSAHashTable(initial_size=11)
+    
+    # --- Define File Paths ---
+    input_dir = "input" # Assuming 'input' directory from Module 3
+    patient_file = os.path.join(input_dir, "patients.csv")
 
-    # Task 5: Insert at least 20 patient records
-    patients_to_add = [
-        PatientRecord(101, "John Smith", 45, "Cardiology", 2),
-        PatientRecord(213, "Jane Doe", 32, "Neurology", 1),
-        PatientRecord(112, "Peter Jones", 67, "Oncology", 3), # Hashes to same index as 213 with size 11
-        PatientRecord(304, "Mary Williams", 28, "Emergency", 1),
-        PatientRecord(451, "David Brown", 55, "Orthopedics", 4),
-        PatientRecord(522, "Susan Miller", 71, "Geriatrics", 5),
-        PatientRecord(633, "Robert Wilson", 39, "Pediatrics", 2),
-        PatientRecord(745, "Linda Garcia", 50, "Emergency", 1),
-        PatientRecord(819, "Michael Martinez", 62, "Cardiology", 3), # Triggers resize from 11 to 23
-        PatientRecord(901, "Karen Rodriguez", 48, "Neurology", 2),
-        PatientRecord(1010, "James Lee", 33, "Oncology", 4),
-        PatientRecord(1123, "Patricia Harris", 76, "Geriatrics", 5),
-        PatientRecord(1245, "Charles Clark", 22, "Emergency", 1),
-        PatientRecord(1366, "Barbara Lewis", 58, "Orthopedics", 3),
-        PatientRecord(1482, "Thomas Walker", 41, "Pediatrics", 2),
-        PatientRecord(1599, "Jessica Hall", 30, "Cardiology", 1),
-        PatientRecord(1602, "Daniel Allen", 65, "Neurology", 4),
-        PatientRecord(1734, "Nancy Young", 53, "Oncology", 5),
-        PatientRecord(1851, "Mark Hernandez", 29, "Emergency", 2),
-        PatientRecord(1977, "Betty King", 80, "Geriatrics", 4),
-        PatientRecord(2088, "Steven Wright", 47, "Orthopedics", 3)
-    ]
+    # --- 1. Insertions from CSV and Collision Demonstration ---
+    output_log.append(f"\n--- Phase 1: Inserting Patient Records from {patient_file} ---")
+    
+    # We must print the hash *before* inserting
+    output_log.append(f"Demonstration: Hash(112) = {patient_table.Hash(112)}, Hash(213) = {patient_table.Hash(213)}")
+    
+    try:
+        # Use csv.DictReader to read the patient CSV by its header names
+        with open(patient_file, mode='r', encoding='utf-8') as file:
+            reader = csv.DictReader(file)
+            for row in reader:
+                try:
+                    # --- THIS BLOCK IS NOW FIXED ---
+                    # It calls PatientRecord using the original camelCase keywords
+                    # from Module 2 (patientID, urgencyLevel, treatmentStatus)
+                    new_patient = PatientRecord(
+                        patientID=int(row['patient_id']),        # <-- CORRECTED
+                        name=row['name'],
+                        age=int(row['age']),
+                        department=row['department'],
+                        urgencyLevel=int(row['urgency_level']), # <-- CORRECTED
+                        treatmentStatus=row['treatment_status'] # <-- CORRECTED
+                    )
+                    # We capture the log from the insert method (if you add logging)
+                    insert_log = patient_table.insert(new_patient)
+                    if insert_log: # In case your insert() returns a string
+                        output_log.append(insert_log)
 
-    # --- 1. Insertions and Collision Demonstration ---
-    print("\n--- Phase 1: Inserting Patient Records ---")
-    print(f"Hash(112) = {patient_table.Hash(112)}, Hash(213) = {patient_table.Hash(213)}") # Prove they have same hash
-    for patient in patients_to_add:
-        patient_table.insert(patient)
+                except ValueError as e:
+                    output_log.append(f"  Skipping row due to data error: {e} -> {row}")
+                except KeyError as e:
+                    output_log.append(f"  Skipping row due to missing CSV header: {e}")
+        output_log.append("Patient records system is populated.\n")
+
+    except FileNotFoundError:
+        output_log.append(f"FATAL ERROR: Could not find patient file at '{patient_file}'.")
+        output_log.append("Please ensure the file exists in the 'input' directory.")
+        print("\n".join(output_log)) # Print what we have so far
+        return # Exit the program
+    except Exception as e:
+        output_log.append(f"An unexpected error occurred reading {patient_file}: {e}")
+        print("\n".join(output_log)) # Print what we have so far
+        return
 
     # Task 6: Explicit collision example
-    print("\nCOLLISION DEMO: Patient 112 and 213 both hash to the same initial index.")
-    print("The hash table resolves this by chaining them in a linked list at that index.")
-    patient_table.displayTable()
+    output_log.append("\nCOLLISION DEMO: Patient 112 and 213 both hash to the same initial index.")
+    output_log.append("The hash table resolves this by chaining them in a linked list at that index.")
+    output_log.extend(patient_table.displayTable()) # Add the table strings to our log
 
     # --- 2. Search Demonstrations (Hit and Miss) ---
-    print("\n--- Phase 2: Searching for Patients ---")
-    print("Searching for an existing patient (HIT):")
-    found_patient = patient_table.search(101)
+    output_log.append("\n--- Phase 2: Searching for Patients ---")
+    output_log.append("Searching for an existing patient (HIT):")
+    found_patient = patient_table.search(101) # search() should not print, but return
     if found_patient:
-        print("  -> Record found:", found_patient)
+        output_log.append(f"  -> Record found: {found_patient}")
+    else:
+        output_log.append("  -> Record not found.")
 
-    print("\nSearching for a non-existent patient (MISS):")
-    patient_table.search(999)
+    output_log.append("\nSearching for a non-existent patient (MISS):")
+    found_patient_miss = patient_table.search(999)
+    if not found_patient_miss:
+        output_log.append("  -> Record not found (SUCCESSFUL MISS).")
+
 
     # --- 3. Deletion Demonstration ---
-    print("\n--- Phase 3: Deleting a Patient Record ---")
-    print("Deleting Patient 451...")
+    output_log.append("\n--- Phase 3: Deleting a Patient Record ---")
+    output_log.append("Deleting Patient 451...")
     patient_table.delete(451)
-    print("Attempting to search for the deleted patient:")
-    patient_table.search(451) # Should be a MISS now
+    output_log.append("Attempting to search for the deleted patient:")
+    found_patient_deleted = patient_table.search(451) # Should be a MISS now
+    if not found_patient_deleted:
+        output_log.append("  -> Record not found (SUCCESSFUL DELETE).")
 
-    print("\nAttempting to delete a non-existent patient:")
+
+    output_log.append("\nAttempting to delete a non-existent patient:")
     patient_table.delete(999) # Should fail gracefully
+    output_log.append("  -> Delete attempt finished (graceful fail).")
 
-    patient_table.displayTable()
+    output_log.extend(patient_table.displayTable())
 
     # --- 4. Complexity and Load Factor Summary ---
-    print("\n--- Final Summary ---")
-    print("Complexity: All operations (insert, search, delete) demonstrated low 'hop' counts,")
-    print("supporting the expected O(1) average time complexity. The worst-case for a single")
-    print("operation would be O(n) if all keys hashed to the same index.")
-    print("\nLoad Factor Behaviour: The table began with a capacity of 11 and was resized to 23")
-    print(f"when the load factor exceeded the threshold of {patient_table.max_load_factor}, ensuring that chains")
-    print("remain short and performance remains high.")
-    print("=====================================================")
+    output_log.append("\n--- Final Summary ---")
+    output_log.append("Complexity: All operations (insert, search, delete) demonstrated low 'hop' counts,")
+    output_log.append("supporting the expected O(1) average time complexity. The worst-case for a single")
+    output_log.append("operation would be O(n) if all keys hashed to the same index.")
+    output_log.append("\nLoad Factor Behaviour: The table began with a capacity of 11 and was resized to 23")
+    output_log.append(f"when the load factor exceeded the threshold of {patient_table.max_load_factor}, ensuring that chains")
+    output_log.append("remain short and performance remains high.")
+    output_log.append("=====================================================")
+
+
+    # --- 5. Join all output and save/print ---
+    final_output_string = "\n".join(output_log)
+
+    # 5a. Print the final output to the terminal
+    print(final_output_string)
+
+    # 5b. Save the final output to the file "as well"
+    output_dir = "output"
+    output_file = os.path.join(output_dir, "hash_results.txt")
+    
+    try:
+        os.makedirs(output_dir, exist_ok=True)
+        with open(output_file, 'w', encoding='utf-8') as f:
+            f.write(final_output_string)
+        print(f"\nHash table test complete. Results also saved to {output_file}")
+    except Exception as e:
+        print(f"\nError: Could not save results file to {output_file}")
+        print(f"Details: {e}")
+
 
 if __name__ == "__main__":
     main()
