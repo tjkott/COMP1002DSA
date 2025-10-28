@@ -1,8 +1,8 @@
 =====================================================
-   Critical Care Optimisation: Patient Lookup
+###   Critical Care Optimisation: Patient Lookup   ###
 =====================================================
 
---- Phase 1: Inserting Patient Records from input/patients.csv ---
+### Step 1: Demonstrating Inserts ###
 Demonstration: Hash(112) = 5, Hash(213) = 10
 Patient records system is populated.
 
@@ -33,14 +33,14 @@ Index 44: [ID: 1482] -> None
 ======================================================================
 
 
---- Phase 2: Searching for Patients ---
+### Step 2: Searching for Patients ###
 Searching for an existing patient (HIT):
   -> Record found: ID: 101, Name: John Smith, Age: 45, Dept: Cardiology, Urgency: 2, Status: Admitted
 
 Searching for a non-existent patient (MISS):
   -> Record not found (SUCCESSFUL MISS).
 
---- Phase 3: Deleting a Patient Record ---
+### Step 3: DELETE Demonstration ###
 Deleting Patient 451...
 Attempting to search for the deleted patient:
   -> Record not found (SUCCESSFUL DELETE).
@@ -71,11 +71,10 @@ Index 44: [ID: 1482] -> None
 
 
 --- Final Summary ---
-Complexity: All operations (insert, search, delete) demonstrated low 'hop' counts,
-supporting the expected O(1) average time complexity. The worst-case for a single
-operation would be O(n) if all keys hashed to the same index.
+Complexity: All operations (insert, search, delete) demonstrated low 'hop' counts, 
+                      supporting the expected O(1) average time complexity. The worst-case for a single 
+                      operation would be O(n) if all keys hashed to the same index.
 
-Load Factor Behaviour: The table began with a capacity of 11 and was resized to 23
-when the load factor exceeded the threshold of 0.7, ensuring that chains
-remain short and performance remains high.
-=====================================================
+Load Factor Behaviour: The table began with a capacity of 11 and was resized 
+                      to 23 when the load factor exceeded the threshold of {patient_table.max_load_factor}, 
+                      ensuring that chains. remain short and performance remains high.

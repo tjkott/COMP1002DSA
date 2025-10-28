@@ -1,0 +1,12 @@
+department1,department2,walking_time
+Emergency,ICU,4
+Emergency,Radiology,2
+Emergency,Wards,7
+ICU,Operating Theatres,2
+ICU,Pharmacy,3
+Radiology,Laboratories,3
+Laboratories,Pharmacy,2
+Operating Theatres,Wards,2
+Wards,Outpatient Units,5
+Wards,Cafeteria,3
+Outpatient Units,Cafeteria,2

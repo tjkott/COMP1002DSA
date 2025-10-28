@@ -1,0 +1,42 @@
+=====================================================
+   Critical Care Optimisation: Hospital Navigation
+=====================================================
+
+--- Phase 1: Building Graph from CSV files ---
+Reading departments from: input/departments.csv
+Reading corridors from: input/corridors.csv
+Graph construction complete.
+
+
+--- Hospital Adjacency List ---
+Emergency          | ICU(4) -> Radiology(2) -> Wards(7)
+ICU                | Emergency(4) -> Operating Theatres(2) -> Pharmacy(3)
+Pharmacy           | ICU(3) -> Laboratories(2)
+Radiology          | Emergency(2) -> Laboratories(3)
+Laboratories       | Radiology(3) -> Pharmacy(2)
+Operating Theatres | ICU(2) -> Wards(2)
+Wards              | Emergency(7) -> Operating Theatres(2) -> Outpatient Units(5) -> Cafeteria(3)
+Outpatient Units   | Wards(5) -> Cafeteria(2)
+Cafeteria          | Wards(3) -> Outpatient Units(2)
+Morgue             | 
+---------------------------------
+
+--- BFS starting from 'Emergency' ---
+Level 0: Emergency, ICU, Radiology, Wards
+Level 1: Operating Theatres, Pharmacy, Laboratories, Outpatient Units, Cafeteria
+Level 2: 
+Cycle Detected: Emergency -> ICU -> Emergency
+---------------------------
+
+--- Shortest Path from 'Emergency' to 'Outpatient Units' ---
+Path: Emergency -> Wards -> Outpatient Units
+Total walking time: 12 minutes.
+
+
+
+--- Shortest Path from 'Emergency' to 'Morgue' ---
+No path found from 'Emergency' to 'Morgue'.
+
+
+
+=====================================================
