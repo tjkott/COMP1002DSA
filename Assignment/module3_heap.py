@@ -1,46 +1,11 @@
+# MODULE 3: Hash-Based Patient Lookup
+# Author: Thejana Kottawatta (22307822)
+
 import math
 import sys
 import csv
 import os
 from contextlib import redirect_stdout
-
-# =====================================================================================
-# MODULE 3: Heap-Based Emergency Scheduling
-# Student: [Your Name]
-# ID: [Your ID]
-# =====================================================================================
-
-# -------------------------------------------------------------------------------------
-# Note on Design Choices (as required by deliverables)
-# -------------------------------------------------------------------------------------
-# 1. Heap Type: Max Heap
-#    A Max Heap is chosen because the problem requires the patient with the
-#    *highest* priority score to be treated first. A Max Heap naturally keeps
-#    the highest-value item at the root (index 0), making the
-#    'extractPriority' operation a direct O(1) lookup for the root element,
-#    followed by an O(log n) re-heapify.
-#
-# 2. Update Strategy: Re-insertion
-#    The strategy for handling a change in a patient's urgency is to treat the
-#    update as a *new* request. A new entry with the new, re-calculated
-#    priority is inserted into the heap. This simplifies the heap logic,
-#    avoiding a complex find-and-update O(n) operation. When the old,
-#    lower-priority request is eventually extracted, the system can perform
-#    a quick check against the hash table to see if the patient's status has
-#    changed or if they have already been treated, and discard the old
-#    request if necessary.
-#
-# 3. Implementation: 0-Based Array
-#    Per the provided example, this heap uses a 0-based array.
-#    - Parent of i: (i - 1) // 2
-#    - Left Child of i: 2 * i + 1
-#    - Right Child of i: 2 * i + 2
-# -------------------------------------------------------------------------------------
-
-# =====================================================================================
-# REQUIRED CLASSES FROM MODULE 2 (for Integration)
-# (Updated for Module 3 style guide: snake_case variables)
-# =====================================================================================
 
 class DSALinkedList:
     """A custom Linked List, adapted to store PatientRecord objects for hash table chaining."""
@@ -86,8 +51,6 @@ class DSALinkedList:
 
     def __len__(self):
         return self.count
-
-# -------------------------------------------------------------------------------------
 
 class PatientRecord:
     """A simple class to structure patient data."""
@@ -150,7 +113,7 @@ class DSAHashTable:
 
         chain.insertLast(record)
         self.count += 1
-        # print(f"INSERT: Patient {record.patient_id} into index {index}.")
+
 
     def search(self, patient_id):
         """Searches for a patient by their ID and returns the full record."""
@@ -182,7 +145,7 @@ class DSAHashTable:
         """Calculates the current load factor of the hash table."""
         return self.count / self.capacity
 
-    # --- Private Helper Methods (PascalCase as per style guide) ---
+    # private methods
 
     def Resize(self):
         """Doubles the hash table size and re-hashes all existing entries."""
@@ -216,10 +179,6 @@ class DSAHashTable:
             if is_prime:
                 return prime_val
             prime_val += 2
-
-# =====================================================================================
-# MODULE 3: HEAP IMPLEMENTATION
-# =====================================================================================
 
 class PriorityRequest:
     """A data structure to hold a scheduling request and its computed priority."""
@@ -379,66 +338,40 @@ class DSAEmergencyHeap:
                 index = max_child_index
                 left_child_index = 2 * index + 1
             else:
-                # Heap property is satisfied
                 break
 
-# =====================================================================================
-# MODULE 3: TEST DRIVER
-# =====================================================================================
-
-# =====================================================================================
-# MODULE 3: TEST DRIVER
-# =====================================================================================
-
-# =====================================================================================
-# MODULE 3: TEST DRIVER
-# =====================================================================================
 
 def main():
-    # --- 1. Setup File Output ---
+    # Output file
     output_dir = "output"
-    output_file = os.path.join(output_dir, "heap_results.txt")
+    output_file = os.path.join(output_dir, "3heap_results.txt")
+    os.makedirs(output_dir, exist_ok=True) # Create the directory if it doesn't exist
 
-    # Create the directory if it doesn't exist
-    os.makedirs(output_dir, exist_ok=True) 
-
-    # This print() will go to the terminal *before* the redirect
-    print(f"Starting heap scheduler... Output will be saved to {output_file}")
-
-    # --- 2. Redirect all stdout (print statements) to the file ---
+    print(f"Output saved on: {output_file}")
     with open(output_file, 'w', encoding='utf-8') as f:
         with redirect_stdout(f):
+            print("===========================================================")
+            print("###   Critical Care Optimisation: Emergency Scheduler   ###")
+            print("===========================================================\n")
 
-            # --- All original main() code is now indented below ---
-            
-            print("=====================================================", flush=True)
-            print("   Critical Care Optimisation: Emergency Scheduler", flush=True)
-            print("=====================================================\n", flush=True)
-        
-            # --- Define File Paths ---
-            input_dir = "input" # Using the "input" directory as in your example
+            input_dir = "input" # input directory
             patient_file = os.path.join(input_dir, "patients.csv")
             requests_file = os.path.join(input_dir, "requests.csv")
-        
-            # --- 1. Setup (Integrate with Module 2) ---
-            print(f"--- Phase 1: Initializing Patient Records from {patient_file} ---", flush=True)
-            patient_table = DSAHashTable(initial_size=23)
+ 
+            print(f"### Step 1: Initisalising hash table to store Patient Records from {patient_file} ###", flush=True)
+            patient_table = DSAHashTable(initial_size=23) # small prime number
             
             try:
-                # Use csv.DictReader to read the patient CSV by its header names
-                with open(patient_file, mode='r', encoding='utf-8') as file:
+                with open(patient_file, mode='r') as file:
                     reader = csv.DictReader(file)
                     for row in reader:
                         try:
-                            # Convert data from string to the correct type (int)
-                            new_patient = PatientRecord(
-                                patient_id=int(row['patient_id']),
-                                name=row['name'],
-                                age=int(row['age']),
-                                department=row['department'],
-                                UrgencyLevel=int(row['urgency_level']),   # <-- Using corrected PascalCase
-                                TreatmentStatus=row['treatment_status'] # <-- Using corrected PascalCase
-                            )
+                            new_patient = PatientRecord(patient_id=int(row['patient_id']),
+                                                        name=row['name'],
+                                                        age=int(row['age']),
+                                                        department=row['department'],
+                                                        UrgencyLevel=int(row['urgency_level']),   
+                                                        TreatmentStatus=row['treatment_status'])
                             patient_table.insert(new_patient)
                         except ValueError as e:
                             print(f"  Skipping row due to data error: {e} -> {row}", flush=True)
@@ -454,20 +387,18 @@ def main():
                 print(f"An unexpected error occurred reading {patient_file}: {e}", flush=True)
                 return
         
-            # --- 2. Insert 10 Requests (Task 4) ---
-            print(f"--- Phase 2: Inserting 10 Emergency Requests from {requests_file} ---", flush=True)
+            ## Demonstrate at least 10 inserts and 5 extractions in a reproducible test run.
+            print(f"### Step 2: Inserting 10 Emergency Requests from {requests_file} ###", flush=True)
             scheduler = DSAEmergencyHeap(max_size=20)
             
             try:
-                # Use csv.DictReader to read the requests CSV
                 with open(requests_file, mode='r', encoding='utf-8') as file:
-                    reader = csv.DictReader(file)
+                    reader = csv.DictReader(file) # patient requests csv file
                     for row in reader:
                         try:
-                            # Convert data from string to integer
-                            p_id = int(row['patient_id'])
+                            patient_id_int = int(row['patient_id'])
                             t_time = int(row['treatment_time'])
-                            scheduler.insert(p_id, t_time, patient_table)
+                            scheduler.insert(patient_id_int, t_time, patient_table)
                         except ValueError as e:
                             print(f"  Skipping request due to data error: {e} -> {row}", flush=True)
                         except KeyError as e:
@@ -481,22 +412,17 @@ def main():
                 print(f"An unexpected error occurred reading {requests_file}: {e}", flush=True)
                 return
         
-            # --- 3. Edge Case Handling (Kept from original) ---
-            # These are good to keep to prove your validation still works
-            print("\n--- Phase 3: Edge Case Handling ---", flush=True)
-            # Invalid Patient ID
+            print("\n### Step 3: Edge Case ###", flush=True)
             scheduler.insert(patient_id=999, treatment_time=30, patient_table=patient_table)
-            # Invalid Treatment Time
             scheduler.insert(patient_id=101, treatment_time=0, patient_table=patient_table)
             
             # Patient not 'Admitted' (demonstrate by deleting them first)
-            print("\n(Demo: Deleting patient 1010 from records...)", flush=True)
+            print("\n(Demo: Deleting patient No. 1010 from records...)", flush=True)
             patient_table.delete(1010) # 1010 was loaded from the CSV
             scheduler.insert(patient_id=1010, treatment_time=30, patient_table=patient_table)
             print("-" * 70, flush=True) 
         
-            # --- 4. Extract 5 Requests (Task 4) ---
-            print("\n--- Phase 4: Extracting Top 5 Priority Patients ---", flush=True)
+            print("\n### Step 4: Extracting Top 5 Priority Patients ---", flush=True)
             print("Expected order: 112(103.0), 745(71.7), 304(55.0), 633(44.0), 101(37.3)", flush=True)
             print("-" * 70, flush=True) 
             
@@ -507,16 +433,11 @@ def main():
                     print("Scheduler is empty, stopping extraction.", flush=True)
                     break
                     
-            print("\n--- Final Summary ---", flush=True)
-            print("Evidence: The extraction log clearly shows that patients with the highest", flush=True)
-            print("computed priority scores (e.g., 103.0, 71.7) were extracted first,", flush=True)
-            print("regardless of the order they were inserted. This confirms the Max Heap", flush=True)
-            print("is correctly prioritizing cases based on the defined metric.", flush=True)
-            print("=====================================================", flush=True)
-            # --- End of indented code ---
-            
-    # --- 3. This print() will go to the terminal *after* the redirect ---
-    print(f"Heap scheduler complete. Results saved to {output_file}")
+            print("\n### Final Summary ###", flush=True)
+            print("""Evidence: The extraction log clearly shows that patients with the highest computed 
+                  priority scores (e.g., 103.0, 71.7) were extracted first, regardless of the order they 
+                  were inserted in. This confirms the Max Heap function is serving higher-priority patients first consistently. """, flush=True)
+    print(f"Module 4 complete running. Results saved to {output_file}")
 
 
 if __name__ == "__main__":

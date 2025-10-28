@@ -349,19 +349,15 @@ class DSAGraph: ## Task 1, bullet 1: Implement a graph class.
             print(f"Total walking time: {end_vertex._distance} minutes.")
         print("\n")
 
-# =====================================================================================
-# MODULE 1: TEST DRIVER
-# =====================================================================================
-
 def main():
     """
     Sets up the hospital graph from CSV files and runs the test algorithms.
-    All print output will be redirected to 'Assignment/output/graph_results.txt'
+    All print output will be redirected to 'Assignment/output/1graph_results.txt'
     """
     
     # --- 1. Setup File Output ---
     output_dir = "output"
-    output_file = os.path.join(output_dir, "graph_results.txt")
+    output_file = os.path.join(output_dir, "1graph_results.txt")
 
     # Create the directory if it doesn't exist
     os.makedirs(output_dir, exist_ok=True) 
