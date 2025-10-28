@@ -8,9 +8,9 @@ Patient records system is populated.
 
 
 COLLISION DEMO: Patient 112 and 213 both hash to the same initial index.
-The hash table resolves this by chaining them in a linked list at that index.
+    Hash Table will resolve collsions via the colllsion strategy I've implemented; Chaining.
 
-========================= HASH TABLE STATE =========================
+========================= HASH TABLE =========================
 Count: 21, Capacity: 47, Load Factor: 0.45
 Index 00: [ID: 745] -> None
 Index 01: [ID: 1734] -> None
@@ -30,25 +30,23 @@ Index 34: [ID: 522] -> [ID: 1851] -> None
 Index 35: [ID: 213] -> None
 Index 40: [ID: 633] -> None
 Index 44: [ID: 1482] -> None
-======================================================================
-
 
 ### Step 2: Searching for Patients ###
-Searching for an existing patient (HIT):
-  -> Record found: ID: 101, Name: John Smith, Age: 45, Dept: Cardiology, Urgency: 2, Status: Admitted
+Searching for an existing patient: (patient 101)
+   Record found: ID: 101, Name: John Smith, Age: 45, Dept: Cardiology, Urgency: 2, Status: Admitted
 
-Searching for a non-existent patient (MISS):
-  -> Record not found (SUCCESSFUL MISS).
+Searching for a non-existent patient:
+    Record not found (SUCCESSFUL).
 
 ### Step 3: DELETE Demonstration ###
 Deleting Patient 451...
 Attempting to search for the deleted patient:
-  -> Record not found (SUCCESSFUL DELETE).
+    Record not found (SUCCESSFULLY DELETED.
 
 Attempting to delete a non-existent patient:
-  -> Delete attempt finished (graceful fail).
+    Delete attempt finished (GRACEFUL ERROR).
 
-========================= HASH TABLE STATE =========================
+========================= HASH TABLE =========================
 Count: 20, Capacity: 47, Load Factor: 0.43
 Index 00: [ID: 745] -> None
 Index 01: [ID: 1734] -> None
@@ -67,8 +65,6 @@ Index 34: [ID: 522] -> [ID: 1851] -> None
 Index 35: [ID: 213] -> None
 Index 40: [ID: 633] -> None
 Index 44: [ID: 1482] -> None
-======================================================================
-
 
 --- Final Summary ---
 Complexity: All operations (insert, search, delete) demonstrated low 'hop' counts, 

@@ -52,14 +52,9 @@ class DSALinkedList:
     def __len__(self):
         return self.count
 
-# -------------------------------------------------------------------------------------
-# Patient Record Definition
-# -------------------------------------------------------------------------------------
-
 class PatientRecord:
     """A simple class to structure patient data."""
     def __init__(self, patientID, name, age, department, urgencyLevel, treatmentStatus="Admitted"):
-        # Task 4: Input Validation
         if not isinstance(patientID, int) or patientID <= 0:
             raise ValueError("PatientID must be a positive integer.")
         if not name or not isinstance(name, str):
@@ -164,23 +159,19 @@ class DSAHashTable:
         return self.count / self.capacity
 
     def displayTable(self):
-        """Returns a list of strings representing the hash table state."""
-        output = []
-        
-        output.append("\n" + "="*25 + " HASH TABLE STATE " + "="*25)
-        output.append(f"Count: {self.count}, Capacity: {self.capacity}, Load Factor: {self.getLoadFactor():.2f}")
+        """Represents the current state of the hash table in a textual format."""
+        table = []
+        table.append("\n" + "="*25 + " HASH TABLE " + "="*25)
+        table.append(f"Count: {self.count}, Capacity: {self.capacity}, Load Factor: {self.getLoadFactor():.2f}")
         for i, chain in enumerate(self.table):
             if len(chain) > 0:
                 chain_str = ""
                 for record in chain:
                     chain_str += f"[ID: {record.patientID}] -> "
-                output.append(f"Index {i:02}: {chain_str}None")
-        output.append("="*70 + "\n")
-        
-        return output
+                table.append(f"Index {i:02}: {chain_str}None")
+        return table
 
-    # --- Private Helper Methods (PascalCase as per style guide) ---
-
+    # private methods
     def Resize(self):
         """Doubles the hash table size and re-hashes all existing entries."""
         old_table = self.table
@@ -269,23 +260,22 @@ def main():
         return
     # demonstrating collision handling
     ## Explicit collision example(s) with intermediate states (e.g., probe indices or chain contents).
-    expected_output.append("\nCOLLISION DEMO: Patient 112 and 213 both hash to the same initial index.")
-    expected_output.append("The hash table resolves this by chaining them in a linked list at that index.")
+    expected_output.append("""\nCOLLISION DEMO: Patient 112 and 213 both hash to the same initial index.
+    Hash Table will resolve collsions via the colllsion strategy I've implemented; Chaining.""")
     expected_output.extend(patient_table.displayTable()) # Add the table strings to our log
 
     # Demonstrating searches
     expected_output.append("\n### Step 2: Searching for Patients ###")
-    expected_output.append("Searching for an existing patient (HIT):")
+    expected_output.append("Searching for an existing patient: (patient 101)")
     found_patient = patient_table.search(101)
     if found_patient: # if patient is found 
-        expected_output.append(f"  -> Record found: {found_patient}")
+        expected_output.append(f"   Record found: {found_patient}")
     else:
-        expected_output.append("  -> Record not found.")
-
-    expected_output.append("\nSearching for a non-existent patient (MISS):")
+        expected_output.append("    Record not found.")
+    expected_output.append("\nSearching for a non-existent patient: (patient 999)")
     found_patient_miss = patient_table.search(999)
     if not found_patient_miss:
-        expected_output.append("  -> Record not found (SUCCESSFUL MISS).")
+        expected_output.append("    Record not found (SUCCESSFUL).")
 
 
     # Delete demonstrations
@@ -295,12 +285,12 @@ def main():
     expected_output.append("Attempting to search for the deleted patient:")
     found_patient_deleted = patient_table.search(451) # Should be a MISS now
     if not found_patient_deleted:
-        expected_output.append("  -> Record not found (SUCCESSFUL DELETE).")
+        expected_output.append("    Record not found (SUCCESSFULLY DELETED.")
 
 
     expected_output.append("\nAttempting to delete a non-existent patient:")
     patient_table.delete(999) # Should fail gracefully
-    expected_output.append("  -> Delete attempt finished (graceful fail).")
+    expected_output.append("    Delete attempt finished (GRACEFUL ERROR).")
 
     expected_output.extend(patient_table.displayTable())
 
