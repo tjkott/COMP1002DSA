@@ -1,58 +1,10 @@
+# MODULE 4: Sorting Patients Records
+# Author: Thejana Kottawatta (22307822)
+
 import time
 import random
 import os
 import sys
-
-# =====================================================================================
-# MODULE 4: Sorting Patient Records
-# Student: [Your Name]
-# ID: [Your ID]
-# =====================================================================================
-
-# -------------------------------------------------------------------------------------
-# Deliverables: Written Reflection
-# -------------------------------------------------------------------------------------
-#
-# 1. Justification of Merge Sort (In-Place, Top-Down):
-#    - Implementation: This is a top-down (recursive) implementation, as seen in
-#      the example. It sorts the array "in-place" by dividing indices, and
-#      the 'Merge' function uses a temporary array to merge results back
-#      into the original array 'A'.
-#    - Reason: This structure directly follows the "divide-and-conquer"
-#      paradigm. It is easier to read and understand the core recursive
-#      logic. Using a temporary array in the 'Merge' function is
-#      unavoidable for an efficient merge sort.
-#
-# 2. Justification of Quick Sort Pivot Strategy (Median-of-Three):
-#    - Implementation: This implementation uses the "Median-of-Three" (Mo3)
-#      pivot strategy, as seen in the example.
-#    - Strategy: Before partitioning, the 'GetMedianPivot' function inspects
-#      the first, middle, and last elements. It *manually* sorts these three
-#      elements in-place (to avoid restricted built-in sorts) and returns
-#      the index of the median value.
-#    - Justification: This strategy is a robust defense against the
-#      worst-case $O(n^2)$ behavior.
-#      - vs. First/Last Pivot: A simple 'first' or 'last' pivot
-#        causes $O(n^2)$ performance on already-sorted or reversed lists,
-#        which are key requirements for this benchmark.
-#      - vs. Random Pivot: Mo3 is deterministic and performs exceptionally
-#        well on (nearly) sorted data, making it a strong choice.
-#
-# 3. Note on Stability:
-#    - Merge Sort: My implementation of Merge Sort is **stable**. During the
-#      'Merge' step, if two elements have the same duration, the
-#      element from the left subarray (which appeared earlier in the original
-#      list) is taken first (`if arr[i].duration <= arr[j].duration:`).
-#      This preserves the original relative order of equal elements.
-#    - Quick Sort: My implementation of Quick Sort is **not stable**. The
-#      'Partition' process involves long-distance swaps which do not
-#      preserve the original relative order of elements with equal durations.
-#
-# -------------------------------------------------------------------------------------
-
-# -------------------------------------------------------------------------------------
-# Data Structures
-# -------------------------------------------------------------------------------------
 
 class TreatmentRecord:
     """A simple record to hold patient ID and treatment duration."""
@@ -74,10 +26,6 @@ class SortStats:
         """String representation for the results table."""
         return f"{self.comparisons:<12} | {self.swaps:<12}"
 
-# -------------------------------------------------------------------------------------
-# Algorithm 1: Merge Sort (In-Place, Recursive)
-# -------------------------------------------------------------------------------------
-
 ## Merge Sort (top-down or bottom-up; justify choice).
 def mergeSort(arr, stats): 
     """
@@ -88,8 +36,6 @@ def mergeSort(arr, stats):
     if len(arr) + 100 > sys.getrecursionlimit():
         sys.setrecursionlimit(len(arr) + 100)
     MergeSortRec(arr, 0, len(arr) - 1, stats)
-
-# --- Private Merge Sort Methods (PascalCase, no underscore) ---
 
 def MergeSortRec(arr, leftIdx, rightIdx, stats):
     """ Recursive helper function for merge sort. """
@@ -133,17 +79,9 @@ def Merge(arr, leftIdx, midIdx, rightIdx, stats):
 
     # Copy the sorted elements from the temporary array back to the
     # original array 'arr' at the correct 'leftIdx' offset
-    for i_temp in range(len(tempArr)):
-        arr[leftIdx + i_temp] = tempArr[i_temp]
+    for temp in range(len(tempArr)):
+        arr[leftIdx + temp] = tempArr[temp]
         # This is a write/copy, not a swap. Swaps remain 0 for Merge Sort.
-
-# -------------------------------------------------------------------------------------
-# Algorithm 2: Quick Sort (In-Place, Median-of-Three Pivot)
-# -------------------------------------------------------------------------------------
-
-# -------------------------------------------------------------------------------------
-# Algorithm 2: Quick Sort (Structured as per Example)
-# -------------------------------------------------------------------------------------
 
 def quickSort(arr, stats):
     """ 
@@ -255,10 +193,6 @@ def Swap(arr, i, j, stats):
     arr[j] = temp
     stats.swaps += 1
 
-# -------------------------------------------------------------------------------------
-# Data Generation
-# -------------------------------------------------------------------------------------
-
 class DataGenerator:
     """Generates test datasets with a reproducible random seed."""
     def __init__(self, seed):
@@ -314,10 +248,6 @@ class DataGenerator:
             
         return arr
 
-# -------------------------------------------------------------------------------------
-# Benchmark Runner
-# -------------------------------------------------------------------------------------
-
 class Benchmark:
     """Runs the sorting algorithms and collects results."""
     def __init__(self):
@@ -326,8 +256,6 @@ class Benchmark:
     def Run(self, sort_function, data, sort_name, condition_name):
         """Times a sort function, collects stats, and verifies correctness."""
         
-        # Manually create a deep copy of the data, as both sorts
-        # will now modify the list in-place.
         data_copy = []
         for r in data:
             data_copy.append(TreatmentRecord(r.patient_id, r.duration))
@@ -353,8 +281,7 @@ class Benchmark:
             "Size": len(sorted_data),
             "Time (ms)": duration_ms,
             "Stats": stats,
-            "Passed": "Yes" if is_sorted else "NO_FAIL"
-        })
+            "Passed": "Yes" if is_sorted else "NO_FAIL"})
 
     def CheckSorted(self, arr):
         """Verifies if the list is correctly sorted by duration."""
@@ -386,22 +313,10 @@ class Benchmark:
         output.append("="*table_width)
         return output
 
-# -------------------------------------------------------------------------------------
-# MAIN TEST DRIVER
-# -------------------------------------------------------------------------------------
-
-# -------------------------------------------------------------------------------------
-# MAIN TEST DRIVER
-# -------------------------------------------------------------------------------------
-
 def main():
+    """Test driver
     """
-    Runs the full benchmark for Module 4, captures all output,
-    then prints it to the terminal AND saves it to a file.
-    """
-    
-    # This list will capture all our output
-    output_log = []
+    file_output = []
     
     Seed = 41 ## Use deterministic random seeds for reproducibility.
     sizes = [100, 500, 1000] ## Generate and sort datasets of size 100, 500, and 1000.
@@ -409,10 +324,9 @@ def main():
     generator = DataGenerator(Seed) # pass the seed to data gen
     benchmark = Benchmark()
 
-    # --- Print Sample Output ---
-    output_log.append("--- 1. Sample Sort Output (Size=100, Random) ---")
+    file_output.append("--- 1. Sample Sort Output (Size=100, Random) ---")
     sample_data = generator.GetRandom(100)
-    output_log.append(f"Original (first 10): {[f'{r.duration}m' for r in sample_data[:10]]}")
+    file_output.append(f"Original (first 10): {[f'{r.duration}m' for r in sample_data[:10]]}")
     
     # Create a copy for the sample sort
     sorted_sample_copy = []
@@ -422,14 +336,13 @@ def main():
     # Run the in-place sort on the copy
     mergeSort(sorted_sample_copy, SortStats()) 
     
-    output_log.append(f"Sorted (first 10):   {[f'{r.duration}m' for r in sorted_sample_copy[:10]]}")
-    output_log.append(f"Sorted (last 10):    {[f'{r.duration}m' for r in sorted_sample_copy[-10:]]}")
+    file_output.append(f"Sorted (first 10):   {[f'{r.duration}m' for r in sorted_sample_copy[:10]]}")
+    file_output.append(f"Sorted (last 10):    {[f'{r.duration}m' for r in sorted_sample_copy[-10:]]}")
 
-    # --- Run Full Benchmark ---
-    output_log.append("\n--- 2. Running Full Benchmark ---")
+    file_output.append("\n--- 2. Running Full Benchmark ---")
     
     for size in sizes:
-        output_log.append(f"Generating and testing datasets for size {size}...")
+        file_output.append(f"Generating and testing datasets for size {size}...")
         ##  For each size, test three conditions: random, nearly sorted (≤10% elements displaced), and reversed. 
         datasets = {"Random": generator.GetRandom(size),
             "Reversed": generator.GetReversed(size),
@@ -439,39 +352,37 @@ def main():
             benchmark.Run(mergeSort, data, "Merge Sort", f"{condition_name}")
             benchmark.Run(quickSortMedian3, data, "Quick Sort", f"{condition_name}") 
 
-    # --- Display Results Table ---
     # Add the formatted table (which is now a list of strings) to our log
     table_strings = benchmark.DisplayResults()
-    output_log.extend(table_strings)
+    file_output.extend(table_strings)
     
     # --- Final Analysis ---
-    output_log.append("\n--- 3. Benchmark Analysis ---")
-    output_log.append("Merge Sort (In-Place):")
-    output_log.append(" - Consistent $O(n log n)$ performance. Time scales predictably with size.")
-    output_log.append(" - Performance is almost identical for Random, Reversed, and Nearly Sorted data,")
-    output_log.append("   proving it is not vulnerable to input order. Swaps are 0 as it copies.")
-    output_log.append("\nQuick Sort (Median-of-Three):")
-    output_log.append(" - Fastest on average (especially for Random and Nearly Sorted data).")
-    output_log.append(" - The Mo3 pivot strategy successfully prevented $O(n^2)$ behavior on Reversed")
-    output_log.append("   and Nearly Sorted lists, keeping performance at $O(n log n).")
-    output_log.append(" - Shows the highest number of swaps, as it works in-place.")
-    output_log.append("\nConclusion:")
-    output_log.append(" - For general-purpose sorting, QuickSort (with Mo3) is fastest.")
-    output_log.append(" - If stability is required (preserving order of 30m, 30m), Merge Sort is the only choice.")
-    output_log.append(" - If predictable, worst-case performance is critical, Merge Sort is safer.")
-    output_log.append("=====================================================")
+    file_output.append("\n--- 3. Benchmark Analysis ---")
+    file_output.append("Merge Sort (In-Place):")
+    file_output.append(" - Consistent O(nlogn) performance. Time scales predictably with size.")
+    file_output.append(" - Performance is almost identical for Random, Reversed, and Nearly Sorted data,")
+    file_output.append("   proving it is not vulnerable to input order. Swaps are 0 as it copies.")
+    file_output.append("\nQuick Sort (Median-of-Three):")
+    file_output.append(" - Fastest on average (especially for Random and Nearly Sorted data).")
+    file_output.append(" - The Mo3 pivot strategy successfully prevented $O(n^2)$ behavior on Reversed")
+    file_output.append("   and Nearly Sorted lists, keeping performance at $O(n log n).")
+    file_output.append(" - Shows the highest number of swaps, as it works in-place.")
+    file_output.append("\nConclusion:")
+    file_output.append(" - For general-purpose sorting, QuickSort (with Mo3) is fastest.")
+    file_output.append(" - If stability is required (preserving order of 30m, 30m), Merge Sort is the only choice.")
+    file_output.append(" - If predictable, worst-case performance is critical, Merge Sort is safer.")
 
     # --- 3. Join all output and save/print ---
     
     # Combine the list of strings into one single string
-    final_output_string = "\n".join(output_log)
+    final_output_string = "\n".join(file_output)
 
     # 3a. Print the final output to the terminal
     print(final_output_string)
 
     # 3b. Save the final output to the file "as well"
     output_dir = "output"
-    output_file = os.path.join(output_dir, "benchmark_results.txt")
+    output_file = os.path.join(output_dir, "4benchmark_results.txt")
     
     try:
         os.makedirs(output_dir, exist_ok=True)
@@ -482,7 +393,5 @@ def main():
         print(f"\nError: Could not save results file to {output_file}")
         print(f"Details: {e}")
 
-
 if __name__ == "__main__":
     main()
-

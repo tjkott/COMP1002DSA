@@ -213,7 +213,7 @@ def main():
     expected_output = [] # output string
     
     expected_output.append("=====================================================")
-    expected_output.append("###   Critical Care Optimisation: Patient Lookup   ###")
+    expected_output.append("###   (3) Patient Lookup on Hash Table   ###")
     expected_output.append("=====================================================")
 
     patient_table = DSAHashTable(initial_size=11) # small prime number

@@ -13,24 +13,24 @@ Generating and testing datasets for size 1000...
 ======================================================================================
 Algorithm    | Condition          | Size   | Time (ms)  | Comparisons  | Swaps        | Passed
 --------------------------------------------------------------------------------------
-Merge Sort   | Random             | 100    | 0.241      | 542          | 0            | Yes
-Quick Sort   | Random             | 100    | 0.261      | 707          | 482          | Yes
-Merge Sort   | Reversed           | 100    | 0.211      | 322          | 0            | Yes
-Quick Sort   | Reversed           | 100    | 0.309      | 839          | 531          | Yes
-Merge Sort   | Nearly Sorted      | 100    | 0.248      | 502          | 0            | Yes
-Quick Sort   | Nearly Sorted      | 100    | 0.274      | 798          | 419          | Yes
-Merge Sort   | Random             | 500    | 1.365      | 3852         | 0            | Yes
-Quick Sort   | Random             | 500    | 1.626      | 5446         | 3233         | Yes
-Merge Sort   | Reversed           | 500    | 1.199      | 2371         | 0            | Yes
-Quick Sort   | Reversed           | 500    | 1.845      | 6702         | 4162         | Yes
-Merge Sort   | Nearly Sorted      | 500    | 1.280      | 3524         | 0            | Yes
-Quick Sort   | Nearly Sorted      | 500    | 1.406      | 5257         | 2850         | Yes
-Merge Sort   | Random             | 1000   | 3.100      | 8680         | 0            | Yes
-Quick Sort   | Random             | 1000   | 3.191      | 11793        | 6866         | Yes
-Merge Sort   | Reversed           | 1000   | 2.478      | 5469         | 0            | Yes
-Quick Sort   | Reversed           | 1000   | 4.190      | 15279        | 9714         | Yes
-Merge Sort   | Nearly Sorted      | 1000   | 2.936      | 7988         | 0            | Yes
-Quick Sort   | Nearly Sorted      | 1000   | 3.363      | 12119        | 7083         | Yes
+Merge Sort   | Random             | 100    | 0.063      | 542          | 0            | Yes
+Quick Sort   | Random             | 100    | 0.058      | 707          | 482          | Yes
+Merge Sort   | Reversed           | 100    | 0.058      | 322          | 0            | Yes
+Quick Sort   | Reversed           | 100    | 0.057      | 839          | 531          | Yes
+Merge Sort   | Nearly Sorted      | 100    | 0.062      | 502          | 0            | Yes
+Quick Sort   | Nearly Sorted      | 100    | 0.050      | 798          | 419          | Yes
+Merge Sort   | Random             | 500    | 0.422      | 3852         | 0            | Yes
+Quick Sort   | Random             | 500    | 0.412      | 5446         | 3233         | Yes
+Merge Sort   | Reversed           | 500    | 0.360      | 2371         | 0            | Yes
+Quick Sort   | Reversed           | 500    | 0.469      | 6702         | 4162         | Yes
+Merge Sort   | Nearly Sorted      | 500    | 0.418      | 3524         | 0            | Yes
+Quick Sort   | Nearly Sorted      | 500    | 0.373      | 5257         | 2850         | Yes
+Merge Sort   | Random             | 1000   | 0.959      | 8680         | 0            | Yes
+Quick Sort   | Random             | 1000   | 0.887      | 11793        | 6866         | Yes
+Merge Sort   | Reversed           | 1000   | 0.814      | 5469         | 0            | Yes
+Quick Sort   | Reversed           | 1000   | 1.060      | 15279        | 9714         | Yes
+Merge Sort   | Nearly Sorted      | 1000   | 0.904      | 7988         | 0            | Yes
+Quick Sort   | Nearly Sorted      | 1000   | 0.851      | 12119        | 7083         | Yes
 ======================================================================================
 
 --- 3. Benchmark Analysis ---

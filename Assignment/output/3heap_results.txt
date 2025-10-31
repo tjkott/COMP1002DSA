@@ -2,84 +2,96 @@
 ###   Critical Care Optimisation: Emergency Scheduler   ###
 ===========================================================
 
-### Step 1: Initisalising hash table to store Patient Records from input/patients.csv ###
+### Step 1: Initisalising hash table to store Patient Records from input\patients.csv ###
 
 RESIZING HASH TABLE: Load factor > 0.7. Resizing from 23 to 47.
 
 Patient records system is populated.
 
-### Step 2: Inserting 10 Emergency Requests from input/requests.csv ###
+### Step 2: Inserting 10 Emergency Requests from input\requests.csv ###
+SEARCH HIT: Found Patient 304 at index 26.
 INSERTING: Mary Williams (ID: 304) with U=1, T=20m. Priority = (6-1) + (1000/20) = 55.00
-  Heap State: [(Idx 0: ID 304, Pri 55.00)]
+  Heap State: [(Index 0: ID 304, Priority Score 55.00)]
 ----------------------------------------------------------------------
+SEARCH HIT: Found Patient 522 at index 34.
 INSERTING: Susan Miller (ID: 522) with U=5, T=120m. Priority = (6-5) + (1000/120) = 9.33
-  Heap State: [(Idx 0: ID 304, Pri 55.00), (Idx 1: ID 522, Pri 9.33)]
+  Heap State: [(Index 0: ID 304, Priority Score 55.00), (Index 1: ID 522, Priority Score 9.33)]
 ----------------------------------------------------------------------
+SEARCH HIT: Found Patient 213 at index 35.
 INSERTING: Jane Doe (ID: 213) with U=1, T=60m. Priority = (6-1) + (1000/60) = 21.67
-  Heap State: [(Idx 0: ID 304, Pri 55.00), (Idx 1: ID 522, Pri 9.33), (Idx 2: ID 213, Pri 21.67)]
+  Heap State: [(Index 0: ID 304, Priority Score 55.00), (Index 1: ID 522, Priority Score 9.33), (Index 2: ID 213, Priority Score 21.67)]
 ----------------------------------------------------------------------
+SEARCH HIT: Found Patient 112 at index 13.
 INSERTING: Peter Jones (ID: 112) with U=3, T=10m. Priority = (6-3) + (1000/10) = 103.00
-  Heap State: [(Idx 0: ID 112, Pri 103.00), (Idx 1: ID 304, Pri 55.00), (Idx 2: ID 213, Pri 21.67), (Idx 3: ID 522, Pri 9.33)]
+  Heap State: [(Index 0: ID 112, Priority Score 103.00), (Index 1: ID 304, Priority Score 55.00), (Index 2: ID 213, Priority Score 21.67), (Index 3: ID 522, Priority Score 9.33)]
 ----------------------------------------------------------------------
+SEARCH HIT: Found Patient 101 at index 28.
 INSERTING: John Smith (ID: 101) with U=2, T=30m. Priority = (6-2) + (1000/30) = 37.33
-  Heap State: [(Idx 0: ID 112, Pri 103.00), (Idx 1: ID 304, Pri 55.00), (Idx 2: ID 213, Pri 21.67), (Idx 3: ID 522, Pri 9.33), (Idx 4: ID 101, Pri 37.33)]
+  Heap State: [(Index 0: ID 112, Priority Score 103.00), (Index 1: ID 304, Priority Score 55.00), (Index 2: ID 213, Priority Score 21.67), (Index 3: ID 522, Priority Score 9.33), (Index 4: ID 101, Priority Score 37.33)]
 ----------------------------------------------------------------------
+SEARCH HIT: Found Patient 451 at index 11.
 INSERTING: David Brown (ID: 451) with U=4, T=45m. Priority = (6-4) + (1000/45) = 24.22
-  Heap State: [(Idx 0: ID 112, Pri 103.00), (Idx 1: ID 304, Pri 55.00), (Idx 2: ID 451, Pri 24.22), (Idx 3: ID 522, Pri 9.33), (Idx 4: ID 101, Pri 37.33), (Idx 5: ID 213, Pri 21.67)]
+  Heap State: [(Index 0: ID 112, Priority Score 103.00), (Index 1: ID 304, Priority Score 55.00), (Index 2: ID 451, Priority Score 24.22), (Index 3: ID 522, Priority Score 9.33), (Index 4: ID 101, Priority Score 37.33), (Index 5: ID 213, Priority Score 21.67)]
 ----------------------------------------------------------------------
+SEARCH HIT: Found Patient 745 at index 0.
 INSERTING: Linda Garcia (ID: 745) with U=1, T=15m. Priority = (6-1) + (1000/15) = 71.67
-  Heap State: [(Idx 0: ID 112, Pri 103.00), (Idx 1: ID 304, Pri 55.00), (Idx 2: ID 745, Pri 71.67), (Idx 3: ID 522, Pri 9.33), (Idx 4: ID 101, Pri 37.33), (Idx 5: ID 213, Pri 21.67), (Idx 6: ID 451, Pri 24.22)]
+  Heap State: [(Index 0: ID 112, Priority Score 103.00), (Index 1: ID 304, Priority Score 55.00), (Index 2: ID 745, Priority Score 71.67), (Index 3: ID 522, Priority Score 9.33), (Index 4: ID 101, Priority Score 37.33), (Index 5: ID 213, Priority Score 21.67), (Index 6: ID 451, Priority Score 24.22)]
 ----------------------------------------------------------------------
+SEARCH HIT: Found Patient 633 at index 40.
 INSERTING: Robert Wilson (ID: 633) with U=2, T=25m. Priority = (6-2) + (1000/25) = 44.00
-  Heap State: [(Idx 0: ID 112, Pri 103.00), (Idx 1: ID 304, Pri 55.00), (Idx 2: ID 745, Pri 71.67), (Idx 3: ID 633, Pri 44.00), (Idx 4: ID 101, Pri 37.33), (Idx 5: ID 213, Pri 21.67), (Idx 6: ID 451, Pri 24.22), (Idx 7: ID 522, Pri 9.33)]
+  Heap State: [(Index 0: ID 112, Priority Score 103.00), (Index 1: ID 304, Priority Score 55.00), (Index 2: ID 745, Priority Score 71.67), (Index 3: ID 633, Priority Score 44.00), (Index 4: ID 101, Priority Score 37.33), (Index 5: ID 213, Priority Score 21.67), (Index 6: ID 451, Priority Score 24.22), (Index 7: ID 522, Priority Score 9.33)]
 ----------------------------------------------------------------------
+SEARCH HIT: Found Patient 1602 at index 26.
 INSERTING: Daniel Allen (ID: 1602) with U=4, T=60m. Priority = (6-4) + (1000/60) = 18.67
-  Heap State: [(Idx 0: ID 112, Pri 103.00), (Idx 1: ID 304, Pri 55.00), (Idx 2: ID 745, Pri 71.67), (Idx 3: ID 633, Pri 44.00), (Idx 4: ID 101, Pri 37.33), (Idx 5: ID 213, Pri 21.67), (Idx 6: ID 451, Pri 24.22), (Idx 7: ID 522, Pri 9.33), (Idx 8: ID 1602, Pri 18.67)]
+  Heap State: [(Index 0: ID 112, Priority Score 103.00), (Index 1: ID 304, Priority Score 55.00), (Index 2: ID 745, Priority Score 71.67), (Index 3: ID 633, Priority Score 44.00), (Index 4: ID 101, Priority Score 37.33), (Index 5: ID 213, Priority Score 21.67), (Index 6: ID 451, Priority Score 24.22), (Index 7: ID 522, Priority Score 9.33), (Index 8: ID 1602, Priority Score 18.67)]
 ----------------------------------------------------------------------
+SEARCH HIT: Found Patient 819 at index 26.
 INSERTING: Michael Martinez (ID: 819) with U=3, T=90m. Priority = (6-3) + (1000/90) = 14.11
-  Heap State: [(Idx 0: ID 112, Pri 103.00), (Idx 1: ID 304, Pri 55.00), (Idx 2: ID 745, Pri 71.67), (Idx 3: ID 633, Pri 44.00), (Idx 4: ID 101, Pri 37.33), (Idx 5: ID 213, Pri 21.67), (Idx 6: ID 451, Pri 24.22), (Idx 7: ID 522, Pri 9.33), (Idx 8: ID 1602, Pri 18.67), (Idx 9: ID 819, Pri 14.11)]
+  Heap State: [(Index 0: ID 112, Priority Score 103.00), (Index 1: ID 304, Priority Score 55.00), (Index 2: ID 745, Priority Score 71.67), (Index 3: ID 633, Priority Score 44.00), (Index 4: ID 101, Priority Score 37.33), (Index 5: ID 213, Priority Score 21.67), (Index 6: ID 451, Priority Score 24.22), (Index 7: ID 522, Priority Score 9.33), (Index 8: ID 1602, Priority Score 18.67), (Index 9: ID 819, Priority Score 14.11)]
 ----------------------------------------------------------------------
 
 ### Step 3: Edge Case ###
+SEARCH FAIL: Patient 999 not found.
 INSERT FAILED: Patient 999 not found in records.
+SEARCH HIT: Found Patient 101 at index 28.
 INSERT FAILED: Invalid treatment time (0) for Patient 101.
 
-(Demo: Deleting patient 1010 from records...)
+(Demo: Deleting patient No. 1010 from records...)
+DELETE: Successfully removed Patient 1010.
+SEARCH FAIL: Patient 1010 not found.
 INSERT FAILED: Patient 1010 not found in records.
 ----------------------------------------------------------------------
 
---- Phase 4: Extracting Top 5 Priority Patients ---
+### Step 4: Extracting Top 5 Priority Patients ---
 Expected order: 112(103.0), 745(71.7), 304(55.0), 633(44.0), 101(37.3)
 ----------------------------------------------------------------------
 
 Extracting patient 1...
 EXTRACTED: [ID: 112 (Peter Jones), Priority: 103.00, U: 3, T: 10m]
-  Heap State: [(Idx 0: ID 745, Pri 71.67), (Idx 1: ID 304, Pri 55.00), (Idx 2: ID 451, Pri 24.22), (Idx 3: ID 633, Pri 44.00), (Idx 4: ID 101, Pri 37.33), (Idx 5: ID 213, Pri 21.67), (Idx 6: ID 819, Pri 14.11), (Idx 7: ID 522, Pri 9.33), (Idx 8: ID 1602, Pri 18.67)]
+  Heap State: [(Index 0: ID 745, Priority Score 71.67), (Index 1: ID 304, Priority Score 55.00), (Index 2: ID 451, Priority Score 24.22), (Index 3: ID 633, Priority Score 44.00), (Index 4: ID 101, Priority Score 37.33), (Index 5: ID 213, Priority Score 21.67), (Index 6: ID 819, Priority Score 14.11), (Index 7: ID 522, Priority Score 9.33), (Index 8: ID 1602, Priority Score 18.67)]
 ----------------------------------------------------------------------
 
 Extracting patient 2...
 EXTRACTED: [ID: 745 (Linda Garcia), Priority: 71.67, U: 1, T: 15m]
-  Heap State: [(Idx 0: ID 304, Pri 55.00), (Idx 1: ID 633, Pri 44.00), (Idx 2: ID 451, Pri 24.22), (Idx 3: ID 1602, Pri 18.67), (Idx 4: ID 101, Pri 37.33), (Idx 5: ID 213, Pri 21.67), (Idx 6: ID 819, Pri 14.11), (Idx 7: ID 522, Pri 9.33)]
+  Heap State: [(Index 0: ID 304, Priority Score 55.00), (Index 1: ID 633, Priority Score 44.00), (Index 2: ID 451, Priority Score 24.22), (Index 3: ID 1602, Priority Score 18.67), (Index 4: ID 101, Priority Score 37.33), (Index 5: ID 213, Priority Score 21.67), (Index 6: ID 819, Priority Score 14.11), (Index 7: ID 522, Priority Score 9.33)]
 ----------------------------------------------------------------------
 
 Extracting patient 3...
 EXTRACTED: [ID: 304 (Mary Williams), Priority: 55.00, U: 1, T: 20m]
-  Heap State: [(Idx 0: ID 633, Pri 44.00), (Idx 1: ID 101, Pri 37.33), (Idx 2: ID 451, Pri 24.22), (Idx 3: ID 1602, Pri 18.67), (Idx 4: ID 522, Pri 9.33), (Idx 5: ID 213, Pri 21.67), (Idx 6: ID 819, Pri 14.11)]
+  Heap State: [(Index 0: ID 633, Priority Score 44.00), (Index 1: ID 101, Priority Score 37.33), (Index 2: ID 451, Priority Score 24.22), (Index 3: ID 1602, Priority Score 18.67), (Index 4: ID 522, Priority Score 9.33), (Index 5: ID 213, Priority Score 21.67), (Index 6: ID 819, Priority Score 14.11)]
 ----------------------------------------------------------------------
 
 Extracting patient 4...
 EXTRACTED: [ID: 633 (Robert Wilson), Priority: 44.00, U: 2, T: 25m]
-  Heap State: [(Idx 0: ID 101, Pri 37.33), (Idx 1: ID 1602, Pri 18.67), (Idx 2: ID 451, Pri 24.22), (Idx 3: ID 819, Pri 14.11), (Idx 4: ID 522, Pri 9.33), (Idx 5: ID 213, Pri 21.67)]
+  Heap State: [(Index 0: ID 101, Priority Score 37.33), (Index 1: ID 1602, Priority Score 18.67), (Index 2: ID 451, Priority Score 24.22), (Index 3: ID 819, Priority Score 14.11), (Index 4: ID 522, Priority Score 9.33), (Index 5: ID 213, Priority Score 21.67)]
 ----------------------------------------------------------------------
 
 Extracting patient 5...
 EXTRACTED: [ID: 101 (John Smith), Priority: 37.33, U: 2, T: 30m]
-  Heap State: [(Idx 0: ID 451, Pri 24.22), (Idx 1: ID 1602, Pri 18.67), (Idx 2: ID 213, Pri 21.67), (Idx 3: ID 819, Pri 14.11), (Idx 4: ID 522, Pri 9.33)]
+  Heap State: [(Index 0: ID 451, Priority Score 24.22), (Index 1: ID 1602, Priority Score 18.67), (Index 2: ID 213, Priority Score 21.67), (Index 3: ID 819, Priority Score 14.11), (Index 4: ID 522, Priority Score 9.33)]
 ----------------------------------------------------------------------
 
---- Final Summary ---
-Evidence: The extraction log clearly shows that patients with the highest
-computed priority scores (e.g., 103.0, 71.7) were extracted first,
-regardless of the order they were inserted. This confirms the Max Heap
-is correctly prioritizing cases based on the defined metric.
-=====================================================
+### Final Summary ###
+Evidence: The extraction log clearly shows that patients with the highest computed 
+                  priority scores (e.g., 103.0, 71.7) were extracted first, regardless of the order they 
+                  were inserted in. This confirms the Max Heap function is serving higher-priority patients first consistently. 

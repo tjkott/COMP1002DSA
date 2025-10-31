@@ -1,5 +1,5 @@
 =====================================================
-###   Critical Care Optimisation: Patient Lookup   ###
+###   (3) Patient Lookup on Hash Table   ###
 =====================================================
 
 ### Step 1: Demonstrating Inserts ###
@@ -35,7 +35,7 @@ Index 44: [ID: 1482] -> None
 Searching for an existing patient: (patient 101)
    Record found: ID: 101, Name: John Smith, Age: 45, Dept: Cardiology, Urgency: 2, Status: Admitted
 
-Searching for a non-existent patient:
+Searching for a non-existent patient: (patient 999)
     Record not found (SUCCESSFUL).
 
 ### Step 3: DELETE Demonstration ###

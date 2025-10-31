@@ -8,7 +8,7 @@ import os
 from contextlib import redirect_stdout
 
 class DSALinkedList:
-    """A custom Linked List, adapted to store PatientRecord objects for hash table chaining."""
+    """Linked List from previous modules, adapted to store PatientRecord objects for hash table chaining."""
     class DSAListNode:
         def __init__(self, value):
             self.value = value
@@ -19,28 +19,29 @@ class DSALinkedList:
         self.count = 0
 
     def insertLast(self, value):
-        new_node = self.DSAListNode(value)
+        newNode = self.DSAListNode(value)
         if self.head is None:
-            self.head = new_node
+            self.head = newNode
         else:
             current = self.head
             while current.next:
                 current = current.next
-            current.next = new_node
+            current.next = newNode
         self.count += 1
 
     def removeByPatientId(self, patient_id):
-        """Removes a record from the list based on patient_id. Returns the removed record or None."""
-        prev, current = None, self.head
+        """Removes a patient record from the list. Returns the removed record or None."""
+        previous = None
+        current = self.head
         while current is not None:
             if current.value.patient_id == patient_id:
-                if prev is None:
+                if previous is None:
                     self.head = current.next
                 else:
-                    prev.next = current.next
+                    previous.next = current.next
                 self.count -= 1
                 return current.value
-            prev, current = current, current.next
+            previous, current = current, current.next
         return None
 
     def __iter__(self):
@@ -55,14 +56,13 @@ class DSALinkedList:
 class PatientRecord:
     """A simple class to structure patient data."""
     def __init__(self, patient_id, name, age, department, UrgencyLevel, TreatmentStatus="Admitted"):
-        # Task 4 (Module 2): Input Validation
+        # exceptions handinling
         if not isinstance(patient_id, int) or patient_id <= 0:
             raise ValueError("PatientID must be a positive integer.")
         if not name or not isinstance(name, str):
             raise ValueError("Name cannot be empty and must be a string.")
         if not isinstance(UrgencyLevel, int) or not (1 <= UrgencyLevel <= 5):
             raise ValueError("Urgency Level must be an integer between 1 and 5.")
-
         self.patient_id = patient_id
         self.name = name
         self.age = age
@@ -71,14 +71,13 @@ class PatientRecord:
         self.treatment_status = TreatmentStatus
 
     def __str__(self):
-        """Provides a clean, readable string representation of the patient record."""
+        """Represent patient record as a string. """
         return (f"ID: {self.patient_id}, Name: {self.name}, Age: {self.age}, "
                 f"Dept: {self.department}, Urgency: {self.urgency_level}, "
                 f"Status: {self.treatment_status}")
 
 class DSAHashTable:
     """A hash table implementation using chaining with DSALinkedList for collision resolution."""
-
     def __init__(self, initial_size=23):
         self.capacity = self.FindNextPrime(initial_size)
         self.table = [DSALinkedList() for _ in range(self.capacity)]
@@ -86,10 +85,9 @@ class DSAHashTable:
         self.max_load_factor = 0.7
 
     def Hash(self, key):
-        """A simple modulo-based hash function."""
-        key_str = str(key)
+        """ modulus (%) hash function."""
         hash_val = 0
-        for char in key_str:
+        for char in str(key):
             hash_val = (31 * hash_val) + ord(char)
         return abs(hash_val % self.capacity)
 
@@ -97,10 +95,8 @@ class DSAHashTable:
         """Inserts a PatientRecord into the hash table. Handles duplicates by updating."""
         if self.getLoadFactor() > self.max_load_factor:
             self.Resize()
-
         index = self.Hash(record.patient_id)
         chain = self.table[index]
-
         for existing_record in chain:
             if existing_record.patient_id == record.patient_id:
                 existing_record.name = record.name
@@ -108,24 +104,20 @@ class DSAHashTable:
                 existing_record.department = record.department
                 existing_record.urgency_level = record.urgency_level
                 existing_record.treatment_status = record.treatment_status
-                # print(f"UPDATE: Patient {record.patient_id} updated.")
+                print(f"UPDATE: Patient {record.patient_id} updated.")
                 return
-
         chain.insertLast(record)
         self.count += 1
 
-
     def search(self, patient_id):
-        """Searches for a patient by their ID and returns the full record."""
+        """Searches for a patient return record."""
         index = self.Hash(patient_id)
         chain = self.table[index]
-
         for record in chain:
             if record.patient_id == patient_id:
-                # print(f"SEARCH HIT: Found Patient {patient_id} at index {index}.")
+                print(f"SEARCH SUCCCESS: Found Patient {patient_id} at index {index}.")
                 return record
-        
-        # print(f"SEARCH MISS: Patient {patient_id} not found.")
+        print(f"SEARCH FAIL: Patient {patient_id} not found.")
         return None
 
     def delete(self, patient_id):
@@ -133,12 +125,11 @@ class DSAHashTable:
         index = self.Hash(patient_id)
         chain = self.table[index]
         removed_record = chain.removeByPatientId(patient_id)
-
         if removed_record:
             self.count -= 1
-            # print(f"DELETE: Successfully removed Patient {patient_id}.")
+            print(f"DELETE: Successfully removed Patient {patient_id}.")
         else:
-            # print(f"DELETE FAIL: Patient {patient_id} not found.")
+            print(f"DELETE FAIL: Patient {patient_id} not found.")
             pass
 
     def getLoadFactor(self):
@@ -146,25 +137,21 @@ class DSAHashTable:
         return self.count / self.capacity
 
     # private methods
-
     def Resize(self):
         """Doubles the hash table size and re-hashes all existing entries."""
         old_table = self.table
         new_capacity = self.FindNextPrime(self.capacity * 2)
-        
-        print(f"\nRESIZING HASH TABLE: Load factor > {self.max_load_factor}. "
-              f"Resizing from {self.capacity} to {new_capacity}.\n")
-
+        print(f"\nRESIZING: Load factor == {self.max_load_factor}. ")
+        print(f"BEFORE: {self.capacity} -> AFTER: {new_capacity}.\n")
         self.capacity = new_capacity
         self.table = [DSALinkedList() for _ in range(self.capacity)]
         self.count = 0
-
         for chain in old_table:
             for record in chain:
                 self.insert(record)
 
     def FindNextPrime(self, start_val):
-        """Finds the next prime number from a given starting value."""
+        """Finds the next closest prime number."""
         if start_val <= 2:
             return 2
         prime_val = start_val
@@ -181,7 +168,7 @@ class DSAHashTable:
             prime_val += 2
 
 class PriorityRequest:
-    """A data structure to hold a scheduling request and its computed priority."""
+    """Class to hold a scheduling request and its computed priority."""
     def __init__(self, patient_id, treatment_time, priority_score, patient_name, patient_urgency):
         self.patient_id = patient_id
         self.treatment_time = treatment_time
@@ -197,10 +184,8 @@ class PriorityRequest:
 
 class DSAEmergencyHeap:
     """
-    An array-based Max Heap to schedule priority requests.
-    Each slip will have 2 pieces of info: ID, and T. 
+    Array-based Max Heap to handle priority requests.
     """
-    
     def __init__(self, max_size=100):
         """Initialise the heap with a fixed maximum size."""
         self.heap_array = [None] * max_size
@@ -208,13 +193,10 @@ class DSAEmergencyHeap:
     
     ## Implement: insert(request), peek(), extract_priority().
     def insert(self, patient_id, treatment_time, patient_table):
+        """Inserts a new request into the heap.
         """
-        - Inserts a new request into the heap.
-        - Fetches patient data from the hash table and computes priority.
-        """
-        # Task 3: Edge Case Handling
         ## Each request references a PatientID; retrieve UrgencyLevel and TreatmentStatus from the hash table. 
-        record = patient_table.search(patient_id) # "Calling the recors office"
+        record = patient_table.search(patient_id) # "Calling the records office"
         
         # exceptions handling
         ## Handle invalid PatientID, zero/negative treatment time, or inactive status gracefully.
@@ -241,7 +223,6 @@ class DSAEmergencyHeap:
         
         new_request = PriorityRequest(patient_id, T, priority_score, record.name, U)
         
-        # Task 4: Log priority computation
         print(f"INSERTING: {new_request.patient_name} (ID: {patient_id}) with U={U}, T={T}m. "
               f"Priority = (6-{U}) + (1000/{T}) = {priority_score:.2f}")
 
@@ -259,7 +240,7 @@ class DSAEmergencyHeap:
         return self.heap_array[0] # return root element without removing (i.e. peeking)
 
     def extract_priority(self):
-        """Returns the highest priority request from the heap."""
+        """Return the highest priority request from the heap."""
         if self.count == 0: # exceptions handling
             print("EXTRACT FAILED: Heap is empty.")
             return None
@@ -267,16 +248,12 @@ class DSAEmergencyHeap:
         priority_request = self.heap_array[0] # pull the highest priority request (root)
         
         # In order to cause least amount of shuffling:
-        # Decrement count and move the last element to the root
         self.count -= 1
         self.heap_array[0] = self.heap_array[self.count]
         self.heap_array[self.count] = None # Clear the last element's spot
 
-        # Now have least prioritised element in most important. 
         # Restore the heap by trickling down from the root
         self.TrickleDown(0) ## percolate down
-
-        # Task 4: Log extraction and print heap state
         print(f"EXTRACTED: {priority_request}")
         self.displayHeapArray()
         return priority_request
@@ -288,11 +265,10 @@ class DSAEmergencyHeap:
             print("[EMPTY]")
             print("-" * 70) # Separator
             return
-        
-        # Manually format the list output
+
         array_str = "["
         for i in range(self.count): # Loop from 0 to count-1
-            array_str += f"(Idx {i}: ID {self.heap_array[i].patient_id}, Pri {self.heap_array[i].priority_score:.2f})"
+            array_str += f"(Index {i}: ID {self.heap_array[i].patient_id}, Priority {self.heap_array[i].priority_score:.2f})"
             if i < self.count - 1:
                 array_str += ", "
         array_str += "]"
@@ -310,8 +286,6 @@ class DSAEmergencyHeap:
             temp = self.heap_array[index]
             self.heap_array[index] = self.heap_array[parent_index]
             self.heap_array[parent_index] = temp
-            
-            # Move up
             index = parent_index
             parent_index = (index - 1) // 2
 
@@ -340,7 +314,6 @@ class DSAEmergencyHeap:
             else:
                 break
 
-
 def main():
     # Output file
     output_dir = "output"
@@ -351,7 +324,7 @@ def main():
     with open(output_file, 'w', encoding='utf-8') as f:
         with redirect_stdout(f):
             print("===========================================================")
-            print("###   Critical Care Optimisation: Emergency Scheduler   ###")
+            print("###               (3) Emergency Scheduler                 ###")
             print("===========================================================\n")
 
             input_dir = "input" # input directory
@@ -421,7 +394,8 @@ def main():
             patient_table.delete(1010) # 1010 was loaded from the CSV
             scheduler.insert(patient_id=1010, treatment_time=30, patient_table=patient_table)
             print("-" * 70, flush=True) 
-        
+
+            ## Evidence than higher priority patients are consistently served first. 
             print("\n### Step 4: Extracting Top 5 Priority Patients ---", flush=True)
             print("Expected order: 112(103.0), 745(71.7), 304(55.0), 633(44.0), 101(37.3)", flush=True)
             print("-" * 70, flush=True) 
@@ -437,8 +411,7 @@ def main():
             print("""Evidence: The extraction log clearly shows that patients with the highest computed 
                   priority scores (e.g., 103.0, 71.7) were extracted first, regardless of the order they 
                   were inserted in. This confirms the Max Heap function is serving higher-priority patients first consistently. """, flush=True)
-    print(f"Module 4 complete running. Results saved to {output_file}")
-
+    print(f"Results also saved to {output_file}")
 
 if __name__ == "__main__":
     main()

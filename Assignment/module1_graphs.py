@@ -1,10 +1,10 @@
+# MODULE 1: Graph-Based Hospital Navigation
+# Author: Thejana Kottawatta (22307822)
+
 import sys # Used for representing infinity in Dijkstra's algorithm
 import csv
 import os
 from contextlib import redirect_stdout
-
-# MODULE 1: Graph-Based Hospital Navigation
-
 
 # Sources:
 ## Task 2, bullet 3. 
@@ -249,7 +249,7 @@ class DSAGraph: ## Task 1, bullet 1: Implement a graph class.
         
         if not cycle_found:
             print("No cycles were found in the hospital layout.")
-        print("---------------------------")
+        print(" ")
 
 
     def DfsCycleHelper(self, vertex, visited, recursionstack):
@@ -351,85 +351,62 @@ class DSAGraph: ## Task 1, bullet 1: Implement a graph class.
 
 def main():
     """
-    Sets up the hospital graph from CSV files and runs the test algorithms.
+    test case
     All print output will be redirected to 'Assignment/output/1graph_results.txt'
     """
-    
-    # --- 1. Setup File Output ---
     output_dir = "output"
     output_file = os.path.join(output_dir, "1graph_results.txt")
-
-    # Create the directory if it doesn't exist
-    os.makedirs(output_dir, exist_ok=True) 
 
     # This print() will go to the terminal *before* the redirect
     print(f"Starting graph tests... Output will be saved to {output_file}")
 
-    # --- 2. Redirect all stdout (print statements) to the file ---
     with open(output_file, 'w', encoding='utf-8') as f:
         with redirect_stdout(f):
-            
-            # --- All original main() logic is now indented below ---
 
             print("=====================================================", flush=True)
-            print("   Critical Care Optimisation: Hospital Navigation", flush=True)
+            print("   Hospital Navigation"   , flush=True)
             print("=====================================================\n", flush=True)
 
             hospital_graph = DSAGraph()
-            
-            # --- Define File Paths ---
+
             input_dir = "input"
             depts_file = os.path.join(input_dir, "departments.csv")
             corridors_file = os.path.join(input_dir, "corridors.csv")
 
+            # Graph construction
             try:
-                # --- 3. Graph Construction from CSV ---
-                print(f"--- Phase 1: Building Graph from CSV files ---", flush=True)
-                print(f"Reading departments from: {depts_file}", flush=True)
                 with open(depts_file, mode='r', encoding='utf-8') as file:
                     reader = csv.DictReader(file)
                     for row in reader:
                         hospital_graph.addVertex(row['department_name'])
-
-                print(f"Reading corridors from: {corridors_file}", flush=True)
-                with open(corridors_file, mode='r', encoding='utf-8') as file:
+                with open(corridors_file, mode='r') as file:
                     reader = csv.DictReader(file)
                     for row in reader:
                         dept1 = row['department1']
                         dept2 = row['department2']
                         time = int(row['walking_time'])
                         hospital_graph.addEdge(dept1, dept2, time)
-                
-                print("Graph construction complete.\n", flush=True)
 
             except FileNotFoundError as e:
-                print(f"FATAL ERROR: Could not find an input file: {e.filename}", flush=True)
+                print(f"ERROR: Could not find an input file: {e.filename}", flush=True)
                 print("Please ensure 'departments.csv' and 'corridors.csv' are in the 'input' directory.", flush=True)
                 return
             except Exception as e:
                 print(f"An unexpected error occurred during file reading: {e}", flush=True)
                 return
-
-            # --- 4. Expected Output ---
             # Display the constructed graph
             hospital_graph.displayAsList()
+            hospital_graph.breadthFirstSearch("Emergency") # run BFS            
+            hospital_graph.depthFirstSearchCycleFind() # Run DFS to find cycles
 
-            # Run BFS from 'Emergency'
-            hospital_graph.breadthFirstSearch("Emergency")
-
-            # Run DFS to find cycles (using the correct method name)
-            hospital_graph.depthFirstSearchCycleFind()
-
-            # Find and display a shortest path (using the correct method name)
-            hospital_graph.dijkstraAlgorithm("Emergency", "Outpatient Units")
+            
+            hospital_graph.dijkstraAlgorithm("Emergency", "Outpatient Units") # Find and display a shortest path
             
             # Example with no path
             hospital_graph.dijkstraAlgorithm("Emergency", "Morgue")
             
-            print("\n=====================================================", flush=True)
-            # --- End of indented code ---
+            print("\n", flush=True)
 
-    # --- 5. This print() will go to the terminal *after* the redirect ---
     print(f"Graph tests complete. Results saved to {output_file}")
 
 

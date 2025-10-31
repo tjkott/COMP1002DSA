@@ -1,10 +1,10 @@
 =====================================================
-   Critical Care Optimisation: Hospital Navigation
+   Hospital Navigation
 =====================================================
 
 --- Phase 1: Building Graph from CSV files ---
-Reading departments from: input/departments.csv
-Reading corridors from: input/corridors.csv
+Reading departments from: input\departments.csv
+Reading corridors from: input\corridors.csv
 Graph construction complete.
 
 
@@ -26,7 +26,7 @@ Level 0: Emergency, ICU, Radiology, Wards
 Level 1: Operating Theatres, Pharmacy, Laboratories, Outpatient Units, Cafeteria
 Level 2: 
 Cycle Detected: Emergency -> ICU -> Emergency
----------------------------
+ 
 
 --- Shortest Path from 'Emergency' to 'Outpatient Units' ---
 Path: Emergency -> Wards -> Outpatient Units
