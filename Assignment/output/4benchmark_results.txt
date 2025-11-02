@@ -1,3 +1,7 @@
+##############################################
+###   MODULE 4: Sorting Patients Records   ###
+##############################################
+
 --- 1. Sample Sort Output (Size=100, Random) ---
 Original (first 10): ['205m', '180m', '128m', '95m', '207m', '155m', '293m', '151m', '206m', '14m']
 Sorted (first 10):   ['14m', '17m', '19m', '19m', '21m', '21m', '23m', '24m', '26m', '30m']
@@ -13,29 +17,29 @@ Generating and testing datasets for size 1000...
 ======================================================================================
 Algorithm    | Condition          | Size   | Time (ms)  | Comparisons  | Swaps        | Passed
 --------------------------------------------------------------------------------------
-Merge Sort   | Random             | 100    | 0.063      | 542          | 0            | Yes
-Quick Sort   | Random             | 100    | 0.058      | 707          | 482          | Yes
-Merge Sort   | Reversed           | 100    | 0.058      | 322          | 0            | Yes
-Quick Sort   | Reversed           | 100    | 0.057      | 839          | 531          | Yes
-Merge Sort   | Nearly Sorted      | 100    | 0.062      | 502          | 0            | Yes
-Quick Sort   | Nearly Sorted      | 100    | 0.050      | 798          | 419          | Yes
-Merge Sort   | Random             | 500    | 0.422      | 3852         | 0            | Yes
-Quick Sort   | Random             | 500    | 0.412      | 5446         | 3233         | Yes
-Merge Sort   | Reversed           | 500    | 0.360      | 2371         | 0            | Yes
-Quick Sort   | Reversed           | 500    | 0.469      | 6702         | 4162         | Yes
-Merge Sort   | Nearly Sorted      | 500    | 0.418      | 3524         | 0            | Yes
-Quick Sort   | Nearly Sorted      | 500    | 0.373      | 5257         | 2850         | Yes
-Merge Sort   | Random             | 1000   | 0.959      | 8680         | 0            | Yes
-Quick Sort   | Random             | 1000   | 0.887      | 11793        | 6866         | Yes
-Merge Sort   | Reversed           | 1000   | 0.814      | 5469         | 0            | Yes
-Quick Sort   | Reversed           | 1000   | 1.060      | 15279        | 9714         | Yes
-Merge Sort   | Nearly Sorted      | 1000   | 0.904      | 7988         | 0            | Yes
-Quick Sort   | Nearly Sorted      | 1000   | 0.851      | 12119        | 7083         | Yes
+Merge Sort   | Random             | 100    | 0.100      | 542          | 0            | Yes
+Quick Sort   | Random             | 100    | 0.102      | 707          | 482          | Yes
+Merge Sort   | Reversed           | 100    | 0.085      | 322          | 0            | Yes
+Quick Sort   | Reversed           | 100    | 0.103      | 839          | 531          | Yes
+Merge Sort   | Nearly Sorted      | 100    | 0.095      | 502          | 0            | Yes
+Quick Sort   | Nearly Sorted      | 100    | 0.091      | 798          | 419          | Yes
+Merge Sort   | Random             | 500    | 0.656      | 3852         | 0            | Yes
+Quick Sort   | Random             | 500    | 0.830      | 5446         | 3233         | Yes
+Merge Sort   | Reversed           | 500    | 0.558      | 2371         | 0            | Yes
+Quick Sort   | Reversed           | 500    | 0.872      | 6702         | 4162         | Yes
+Merge Sort   | Nearly Sorted      | 500    | 0.693      | 3524         | 0            | Yes
+Quick Sort   | Nearly Sorted      | 500    | 1.855      | 5257         | 2850         | Yes
+Merge Sort   | Random             | 1000   | 1.428      | 8680         | 0            | Yes
+Quick Sort   | Random             | 1000   | 8.544      | 11793        | 6866         | Yes
+Merge Sort   | Reversed           | 1000   | 5.879      | 5469         | 0            | Yes
+Quick Sort   | Reversed           | 1000   | 18.934     | 15279        | 9714         | Yes
+Merge Sort   | Nearly Sorted      | 1000   | 9.196      | 7988         | 0            | Yes
+Quick Sort   | Nearly Sorted      | 1000   | 4.297      | 12119        | 7083         | Yes
 ======================================================================================
 
 --- 3. Benchmark Analysis ---
 Merge Sort (In-Place):
- - Consistent $O(n log n)$ performance. Time scales predictably with size.
+ - Consistent O(nlogn) performance. Time scales predictably with size.
  - Performance is almost identical for Random, Reversed, and Nearly Sorted data,
    proving it is not vulnerable to input order. Swaps are 0 as it copies.
 
@@ -49,4 +53,3 @@ Conclusion:
  - For general-purpose sorting, QuickSort (with Mo3) is fastest.
  - If stability is required (preserving order of 30m, 30m), Merge Sort is the only choice.
  - If predictable, worst-case performance is critical, Merge Sort is safer.
-=====================================================

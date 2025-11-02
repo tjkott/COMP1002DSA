@@ -1,11 +1,6 @@
-=====================================================
-   Hospital Navigation
-=====================================================
-
---- Phase 1: Building Graph from CSV files ---
-Reading departments from: input\departments.csv
-Reading corridors from: input\corridors.csv
-Graph construction complete.
+###############################
+###   Hospital Navigation   ###
+############################### 
 
 
 --- Hospital Adjacency List ---
@@ -19,7 +14,6 @@ Wards              | Emergency(7) -> Operating Theatres(2) -> Outpatient Units(5
 Outpatient Units   | Wards(5) -> Cafeteria(2)
 Cafeteria          | Wards(3) -> Outpatient Units(2)
 Morgue             | 
----------------------------------
 
 --- BFS starting from 'Emergency' ---
 Level 0: Emergency, ICU, Radiology, Wards
@@ -39,4 +33,4 @@ No path found from 'Emergency' to 'Morgue'.
 
 
 
-=====================================================
+

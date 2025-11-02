@@ -52,9 +52,14 @@ class DSALinkedList:
     def __len__(self):
         return self.count
 
+# -------------------------------------------------------------------------------------
+# Patient Record Definition
+# -------------------------------------------------------------------------------------
+
 class PatientRecord:
     """A simple class to structure patient data."""
     def __init__(self, patientID, name, age, department, urgencyLevel, treatmentStatus="Admitted"):
+        # Task 4: Input Validation
         if not isinstance(patientID, int) or patientID <= 0:
             raise ValueError("PatientID must be a positive integer.")
         if not name or not isinstance(name, str):
@@ -116,13 +121,13 @@ class DSAHashTable:
                 existing_record.department = record.department
                 existing_record.urgencyLevel = record.urgencyLevel
                 existing_record.treatmentStatus = record.treatmentStatus
-                print(f"UPDATE: Patient {record.patientID} updated. (Chain traversal: {op_count} hops)")
+                print(f"UPDATE: Patient {record.patientID} updated. (Chain traversal: {op_count} hops)", flush=True)
                 return
 
         # No duplicate found, insert new record
         chain.insertLast(record)
         self.count += 1
-        print(f"INSERT: Patient {record.patientID} into index {index}. (Chain length: {len(chain)})")
+        print(f"INSERT: Patient {record.patientID} into index {index}. (Chain length: {len(chain)})", flush=True)
 
     def search(self, patientID):
         """Searches for a patient by their ID and returns the full record."""
@@ -134,10 +139,10 @@ class DSAHashTable:
         for record in chain:
             op_count += 1
             if record.patientID == patientID:
-                print(f"Found Patient {patientID} at index {index}. (Chain traversal: {op_count} hops)")
+                print(f"Found Patient {patientID} at index {index}. (Chain traversal: {op_count} hops)", flush=True)
                 return record
-
-        print(f"SEARCH MISS: Patient {patientID} not found. (Chain traversal: {op_count} hops)")
+        
+        print(f"SEARCH MISS: Patient {patientID} not found. (Chain traversal: {op_count} hops)", flush=True)
         return None
 
     def delete(self, patientID):
@@ -149,27 +154,35 @@ class DSAHashTable:
 
         if removed_record:
             self.count -= 1
-            print(f"DELETE: Successfully removed Patient {patientID} from index {index}.")
+            print(f"DELETE: Successfully removed Patient {patientID} from index {index}.", flush=True)
         else:
-            # Task 2: Handle missing keys gracefully
-            print(f"DELETE FAIL: Patient {patientID} not found, nothing to delete.")
+            print(f"DELETE FAIL: Patient {patientID} not found, nothing to delete.", flush=True)
 
     def getLoadFactor(self):
         """Calculates the current load factor of the hash table."""
         return self.count / self.capacity
 
     def displayTable(self):
-        """Represents the current state of the hash table in a textual format."""
-        table = []
-        table.append("\n" + "="*25 + " HASH TABLE " + "="*25)
-        table.append(f"Count: {self.count}, Capacity: {self.capacity}, Load Factor: {self.getLoadFactor():.2f}")
+        """
+        Returns the current state of the hash table as a single, multi-line string.
+        This method is now 100% compliant and uses no built-in lists.
+        """
+        # Start with a header
+        string_builder = "\n" + "="*25 + " HASH TABLE " + "="*25 + "\n"
+        string_builder += f"Count: {self.count}, Capacity: {self.capacity}, Load Factor: {self.getLoadFactor():.2f}\n"
+        
         for i, chain in enumerate(self.table):
             if len(chain) > 0:
+                # Build the chain string
                 chain_str = ""
                 for record in chain:
                     chain_str += f"[ID: {record.patientID}] -> "
-                table.append(f"Index {i:02}: {chain_str}None")
-        return table
+                
+                # Add the full line to the master string
+                string_builder += f"Index {i:02}: {chain_str}None\n"
+        
+        string_builder += "="*70 + "\n"
+        return string_builder
 
     # private methods
     def Resize(self):
@@ -178,7 +191,7 @@ class DSAHashTable:
         new_capacity = self.FindNextPrime(self.capacity * 2)
         
         print(f"\nRESIZING: Load factor > {self.max_load_factor}. "
-              f"Resizing from {self.capacity} to {new_capacity}.\n")
+              f"Resizing from {self.capacity} to {new_capacity}.\n", flush=True)
 
         # Reset the current table
         self.capacity = new_capacity
@@ -212,9 +225,9 @@ def main():
     """Test driver to demonstrate all hash table functionalities."""
     expected_output = [] # output string
     
-    expected_output.append("=====================================================")
-    expected_output.append("###   (3) Patient Lookup on Hash Table   ###")
-    expected_output.append("=====================================================")
+    expected_output.append("#"*47)
+    expected_output.append("###   MODULE 2: Hash-Based Patient Lookup   ###")
+    expected_output.append("#"*47)
 
     patient_table = DSAHashTable(initial_size=11) # small prime number
 
@@ -241,9 +254,11 @@ def main():
                         urgencyLevel=int(row['urgency_level']), 
                         treatmentStatus=row['treatment_status'] 
                     )
-                    insert_log = patient_table.insert(new_patient)
-                    if insert_log: 
-                        expected_output.append(insert_log)
+                    # We capture the log from the insert method (if you add logging)
+                    # Note: Our new insert() prints directly, so insert_log will be None.
+                    # This is fine. We just call the method.
+                    patient_table.insert(new_patient)
+
                 except ValueError as e:
                     expected_output.append(f"  Skipping row due to data error: {e} -> {row}")
                 except KeyError as e:
@@ -262,7 +277,7 @@ def main():
     ## Explicit collision example(s) with intermediate states (e.g., probe indices or chain contents).
     expected_output.append("""\nCOLLISION DEMO: Patient 112 and 213 both hash to the same initial index.
     Hash Table will resolve collsions via the colllsion strategy I've implemented; Chaining.""")
-    expected_output.extend(patient_table.displayTable()) # Add the table strings to our log
+    expected_output.append(patient_table.displayTable()) # Add the table string to our log
 
     # Demonstrating searches
     expected_output.append("\n### Step 2: Searching for Patients ###")
@@ -285,25 +300,33 @@ def main():
     expected_output.append("Attempting to search for the deleted patient:")
     found_patient_deleted = patient_table.search(451) # Should be a MISS now
     if not found_patient_deleted:
-        expected_output.append("    Record not found (SUCCESSFULLY DELETED.")
+        expected_output.append("    Record not found (SUCCESSFULLY DELETED.)")
 
 
     expected_output.append("\nAttempting to delete a non-existent patient:")
     patient_table.delete(999) # Should fail gracefully
     expected_output.append("    Delete attempt finished (GRACEFUL ERROR).")
 
-    expected_output.extend(patient_table.displayTable())
+    expected_output.append(patient_table.displayTable())
 
     ## Summary of complexity, load factor behaviour, and any reizing. 
     expected_output.append("\n--- Final Summary ---")
     expected_output.append("""Complexity: All operations (insert, search, delete) demonstrated low 'hop' counts, 
                       supporting the expected O(1) average time complexity. The worst-case for a single 
                       operation would be O(n) if all keys hashed to the same index.""")
-    expected_output.append("""\nLoad Factor Behaviour: The table began with a capacity of 11 and was resized 
+    expected_output.append(f"""\nLoad Factor Behaviour: The table began with a capacity of 11 and was resized 
                       to 23 when the load factor exceeded the threshold of {patient_table.max_load_factor}, 
                       ensuring that chains. remain short and performance remains high.""")
+    
+    final_output_string = ""
+    
+    # 1. Join all the log messages from our 'expected_output' list
     final_output_string = "\n".join(expected_output)
+
+    # 2. Print the final result to the terminal
     print(final_output_string)
+    
+    # 3. Save the final result to the file
     output_dir = "output" # save cumulative output string to output directory. 
     output_file = os.path.join(output_dir, "2hash_results.txt")
     try:

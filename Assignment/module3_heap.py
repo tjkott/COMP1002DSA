@@ -323,9 +323,9 @@ def main():
     print(f"Output saved on: {output_file}")
     with open(output_file, 'w', encoding='utf-8') as f:
         with redirect_stdout(f):
-            print("===========================================================")
-            print("###               (3) Emergency Scheduler                 ###")
-            print("===========================================================\n")
+            print("#"*36, flush=True)
+            print("###   (3) Emergency Scheduler   ###")
+            print("#"*36,"\n", flush=True)
 
             input_dir = "input" # input directory
             patient_file = os.path.join(input_dir, "patients.csv")

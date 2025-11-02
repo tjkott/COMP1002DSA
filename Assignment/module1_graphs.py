@@ -1,15 +1,16 @@
-# MODULE 1: Graph-Based Hospital Navigation
+# MODULE 2: Hash-Based Patient Lookup
 # Author: Thejana Kottawatta (22307822)
+
+# Sources:
+## Task 2, bullet 3. 
+"""Source: Ihechikara. (2022, November 30). Dijkstra's algorithm – 
+        Explained with a pseudocode example. freeCodeCamp. https://www.freecodecamp.org/news/dijkstras-algorithm-explained-with-a-pseudocode-example/"""
 
 import sys # Used for representing infinity in Dijkstra's algorithm
 import csv
 import os
 from contextlib import redirect_stdout
 
-# Sources:
-## Task 2, bullet 3. 
-"""Source: Ihechikara. (2022, November 30). Dijkstra's algorithm – 
-        Explained with a pseudocode example. freeCodeCamp. https://www.freecodecamp.org/news/dijkstras-algorithm-explained-with-a-pseudocode-example/"""
 
 class DSALinkedList:
     """
@@ -37,6 +38,14 @@ class DSALinkedList:
             while current.next:
                 current = current.next
             current.next = new_node
+        self.count += 1
+
+    # ADDED: insertFirst, needed for path reconstruction without built-in list.insert(0,...)
+    def insertFirst(self, value):
+        """Adds a new node to the start of the list."""
+        new_node = self.DSAListNode(value)
+        new_node.next = self.head
+        self.head = new_node
         self.count += 1
 
     def removeFirst(self):
@@ -94,6 +103,7 @@ class DSAGraphVertex: # represents a single "department".
         self.visited = False
         self.distance = sys.maxsize # Contructors for Dijkstra's Algorith
         self.predecessor = None
+        self.in_recursion_stack = False
 
     def getLabel(self):
         return self.label
@@ -151,41 +161,37 @@ class DSAGraph: ## Task 1, bullet 1: Implement a graph class.
         """Checks if a vertex with the given label exists."""
         return self.getVertex(label) is not None
 
-    def ClearAllVisited(self):
-        """Helper method to reset the visited status of all vertices."""
+    def ClearAllFlags(self):
+        """Helper method to reset all flags on all vertices."""
         for vertex in self._vertices:
             vertex.clearVisited()
+            vertex.in_recursion_stack = False
 
     def displayAsList(self): ## Textual/visual graph structure. 
         """Displays the graph structure as an adjacency list with weights."""
-        print("\n--- Hospital Adjacency List ---")
+        print("\n--- Hospital Adjacency List ---", flush=True)
         for vertex in self._vertices:
-            adj_list = []
-            for neighbor, weight in vertex.getAdjacent():
-                adj_list.append(f"{neighbor.getLabel()}({weight})")
-            
-            # Manual join to avoid using restricted built-ins
             adj_str = ""
-            for i, item in enumerate(adj_list):
-                adj_str += item
-                if i < len(adj_list) - 1:
+            count = 0
+            for neighbor, weight in vertex.getAdjacent():
+                adj_str += f"{neighbor.getLabel()}({weight})"
+                count += 1
+                if count < len(vertex.getAdjacent()):
                     adj_str += " -> "
             
-            print(f"{vertex.getLabel():<18} | {adj_str}")
-        print("---------------------------------")
-
+            print(f"{vertex.getLabel():<18} | {adj_str}", flush=True)
 
     def breadthFirstSearch(self, start_label): ## Breadth-First Search (BFS)
         """
         Performs a Breadth-First Search (BFS) from a starting department.
         Outputs all reachable departments grouped by their level (number of hops).
         """
-        print(f"\n--- BFS starting from '{start_label}' ---")
-        self.ClearAllVisited()
+        print(f"\n--- BFS starting from '{start_label}' ---", flush=True)
+        self.ClearAllFlags()
         start_vertex = self.getVertex(start_label)
 
         if not start_vertex:
-            print(f"Error: Department '{start_label}' not found.")
+            print(f"Error: Department '{start_label}' not found.", flush=True)
             return
 
         q = DSAQueue() # use custom implemented queue. 
@@ -196,90 +202,68 @@ class DSAGraph: ## Task 1, bullet 1: Implement a graph class.
         q.enqueue(None) 
         level = 0
         
-        level_output = f"{start_vertex.getLabel()}"
+        level_output = ""
 
         while not q.isEmpty():
             current_vertex = q.dequeue()
 
             if current_vertex is None: 
-                print(f"Level {level}: {level_output}")
+                print(f"Level {level}: {level_output}", flush=True)
                 level_output = ""
                 level += 1
                 if not q.isEmpty():
                     q.enqueue(None)
             else:
+                if level_output == "":
+                    level_output += f"{current_vertex.getLabel()}"
+                else:
+                    level_output += f", {current_vertex.getLabel()}"
                 for neighbor, _ in current_vertex.getAdjacent():
                     if not neighbor.getVisited():
                         neighbor.setVisited()
                         q.enqueue(neighbor)
-                        if level_output == "":
-                            level_output += f"{neighbor.getLabel()}"
-                        else:
-                            level_output += f", {neighbor.getLabel()}"
 
     def depthFirstSearchCycleFind(self): ## DFS cycle detection (and cycle members if present). 
         """
         Performs a Depth-First Search (DFS) across the entire graph to detect cycles.
         Returns the first cycle found and the nodes involved.
         """
-        self.ClearAllVisited()
-        # Using lists as sets to track visited nodes and the current path (recursion stack)
-        visited = [] 
-        recursion_stack = [] # tracks nodes in the path. 
+        print("\n--- DFS Cycle Detection ---", flush=True)
+        self.ClearAllFlags()
         cycle_found = False
-
         for vertex in self._vertices:
-            if vertex not in visited:
-                cycle_path = self.DfsCycleHelper(vertex, visited, recursion_stack)
-                if cycle_path:
-                    # Manually reverse and format the cycle path for printing
-                    reversed_path = []
-                    for node in cycle_path:
-                        reversed_path.insert(0, str(node))
-                    
-                    path_str = ""
-                    for i, node_label in enumerate(reversed_path):
-                        path_str += node_label
-                        if i < len(reversed_path) - 1:
-                            path_str += " -> "
-                    
-                    print(f"Cycle Detected: {path_str}")
+            if not vertex.getVisited():
+                if self.DfsCycleHelper(vertex, None): # Start with no parent
                     cycle_found = True
                     break # Stop after finding the first cycle
         
         if not cycle_found:
-            print("No cycles were found in the hospital layout.")
-        print(" ")
+            print("No cycles were found in the hospital layout.", flush=True)
+        print(" ", flush=True)
 
-
-    def DfsCycleHelper(self, vertex, visited, recursionstack):
-        """Recursive helper for depthFirstSearchCycleFind function"""
-        visited.append(vertex)
-        recursionstack.append(vertex) 
+    def DfsCycleHelper(self, vertex, parent):
+        """
+        Recursive helper for DFS cycle detection.
+        Uses vertex flags instead of restricted lists.
+        """
+        vertex.setVisited()
+        vertex.in_recursion_stack = True 
 
         for neighbor, _ in vertex.getAdjacent():
-            if neighbor not in visited:
-                # Recurse and propagate the cycle path if found
-                path = self.DfsCycleHelper(neighbor, visited, recursionstack)
-                if path:
-                    return path
-            elif neighbor in recursionstack:
-                # Cycle detected. Find where it starts and build the path.
-                cycle_start_index = 0
-                for i, node in enumerate(recursionstack):
-                    if node == neighbor:
-                        cycle_start_index = i
-                        break
-                
-                # Build path from the start of the cycle to the current node
-                path = [neighbor]
-                for i in range(cycle_start_index + 1, len(recursionstack)):
-                    path.append(recursionstack[i])
-                path.append(neighbor) # Close the loop
-                return path
+            if neighbor == parent:
+                continue 
 
-        recursionstack.pop() # Backtrack
-        return None
+            if not neighbor.getVisited():
+                # Recurse and propagate the cycle-found signal
+                if self.DfsCycleHelper(neighbor, vertex): # Pass self as new parent
+                    return True
+            elif neighbor.in_recursion_stack:
+                # We've found a neighbor that is *already* in our current path
+                print(f"Cycle Detected: Path found from {vertex.getLabel()} back to {neighbor.getLabel()}", flush=True)
+                return True
+
+        vertex.in_recursion_stack = False # Backtrack (remove from recursion stack)
+        return False
 
     def dijkstraAlgorithm(self, start_label, end_label):
         ## Shortest Path Algorithm: Implement Dijkstra algorithm from a source; report
@@ -288,55 +272,51 @@ class DSAGraph: ## Task 1, bullet 1: Implement a graph class.
         """
         Dijkstra's algorithm. 
         """
-        print(f"\n--- Shortest Path from '{start_label}' to '{end_label}' ---")
+        print(f"\n--- Shortest Path from '{start_label}' to '{end_label}' ---", flush=True)
         for vertex in self._vertices: # reset distance and predecessor node for all vertices. 
             vertex._distance = sys.maxsize
             vertex._predecessor = None
+            vertex.clearVisited() # Use visited flag for Dijkstra
         
         start_vertex = self.getVertex(start_label)
         end_vertex = self.getVertex(end_label)
 
         if not start_vertex or not end_vertex:
-            print("Error: One or both departments not found.")
+            print("Error: One or both departments not found.", flush=True)
             return
 
         start_vertex._distance = 0
-        unvisited = list(self._vertices) # Create a list of all vertices which need to be visted. 
+        
+        unvisited_count = len(self._vertices) 
 
-        while unvisited:
-            # Find vertex with smallest distance (manual priority queue)
+        while unvisited_count > 0:
             current_vertex = None
             min_dist = sys.maxsize
-            for vertex in unvisited:
-                if vertex._distance < min_dist:
+            for vertex in self._vertices:
+                if not vertex.getVisited() and vertex._distance < min_dist:
                     min_dist = vertex._distance
                     current_vertex = vertex
 
             if current_vertex is None or current_vertex._distance == sys.maxsize:
                 break # No path to remaining nodes
 
-            # Manual removal from list to avoid restricted built-ins
-            temp_unvisited = []
-            for vertex in unvisited:
-                if vertex != current_vertex:
-                    temp_unvisited.append(vertex)
-            unvisited = temp_unvisited
-            
-            # Relaxation step
+            current_vertex.setVisited()
+            unvisited_count -= 1
             for neighbor, weight in current_vertex.getAdjacent():
-                new_dist = current_vertex._distance + weight
-                if new_dist < neighbor._distance:
-                    neighbor._distance = new_dist
-                    neighbor._predecessor = current_vertex
+                if not neighbor.getVisited(): #
+                    new_dist = current_vertex._distance + weight
+                    if new_dist < neighbor._distance:
+                        neighbor._distance = new_dist
+                        neighbor._predecessor = current_vertex
 
         # Reconstruct and print path
         if end_vertex._distance == sys.maxsize:
-            print(f"No path found from '{start_label}' to '{end_label}'.")
+            print(f"No path found from '{start_label}' to '{end_label}'.", flush=True)
         else:
-            path = []
+            path = DSALinkedList()
             current = end_vertex
             while current is not None:
-                path.insert(0, current.getLabel())
+                path.insertFirst(current.getLabel()) # Use insertFirst to build path
                 current = current._predecessor
             
             path_str = ""
@@ -345,9 +325,9 @@ class DSAGraph: ## Task 1, bullet 1: Implement a graph class.
                 if i < len(path) - 1:
                     path_str += " -> "
             
-            print(f"Path: {path_str}")
-            print(f"Total walking time: {end_vertex._distance} minutes.")
-        print("\n")
+            print(f"Path: {path_str}", flush=True)
+            print(f"Total walking time: {end_vertex._distance} minutes.", flush=True)
+        print("\n", flush=True)
 
 def main():
     """
@@ -363,9 +343,9 @@ def main():
     with open(output_file, 'w', encoding='utf-8') as f:
         with redirect_stdout(f):
 
-            print("=====================================================", flush=True)
-            print("   Hospital Navigation"   , flush=True)
-            print("=====================================================\n", flush=True)
+            print("#"*31, flush=True)
+            print("###   Hospital Navigation   ###", flush=True)
+            print("#"*31,"\n", flush=True)
 
             hospital_graph = DSAGraph()
 
@@ -375,10 +355,14 @@ def main():
 
             # Graph construction
             try:
+                print(f"--- Phase 1: Building Graph from CSV files ---", flush=True)
+                print(f"Reading departments from: {depts_file}", flush=True)
                 with open(depts_file, mode='r', encoding='utf-8') as file:
                     reader = csv.DictReader(file)
                     for row in reader:
                         hospital_graph.addVertex(row['department_name'])
+                
+                print(f"Reading corridors from: {corridors_file}", flush=True)
                 with open(corridors_file, mode='r') as file:
                     reader = csv.DictReader(file)
                     for row in reader:
@@ -386,6 +370,8 @@ def main():
                         dept2 = row['department2']
                         time = int(row['walking_time'])
                         hospital_graph.addEdge(dept1, dept2, time)
+                
+                print("Graph construction complete.", flush=True)
 
             except FileNotFoundError as e:
                 print(f"ERROR: Could not find an input file: {e.filename}", flush=True)
@@ -394,6 +380,7 @@ def main():
             except Exception as e:
                 print(f"An unexpected error occurred during file reading: {e}", flush=True)
                 return
+            
             # Display the constructed graph
             hospital_graph.displayAsList()
             hospital_graph.breadthFirstSearch("Emergency") # run BFS            
@@ -412,3 +399,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

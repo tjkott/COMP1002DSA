@@ -1,1 +1,44 @@
-module wise instructions to run/test each module. 
+# COMP1002 Data Structures and Algorithms: Final Assignment
+# Author: Thejana Kottawatta Hewage (223072822)
+# Institution: Curtin University
+
+# Project Description:
+Module 1: A Graph to model the hospital layout and find efficient paths.
+Module 2: A Hash Table to provide fast, O(1) expected lookup for patient records.
+Module 3: A Max Heap (Priority Queue) to schedule emergency cases based on a priority metric.
+Module 4: A Sorting Benchmark to analyse the performance of Merge Sort and Quick Sort algorithms on patient report data.
+
+# Directory Structure
+
+Assignment/
+├── input/
+│   ├── corridors.csv
+│   ├── departments.csv
+│   ├── patients.csv
+│   └── requests.csv
+│
+├── output/
+│   ├── 1graph_results.txt
+│   ├── 2hash_results.txt
+│   ├── 3heap_results.txt
+│   └── 4benchmark_results.txt
+|
+├── mermaidUMLDiagramSourceCode
+│
+├── module1_graphs.py           (to run: python3 module1_graphs.py)
+├── module2_hash.py             (to run: python3 module2_hash.py)
+├── module3_heap.py             (to run: python3 module3_heap.py)
+├── module4_sorting.py          (to run: python3 module4_sorting.py)
+│
+└── README
+
+
+# Dependencies
+python3
+sys
+csv
+os
+math
+time
+random
+contextlib (for file redirection)

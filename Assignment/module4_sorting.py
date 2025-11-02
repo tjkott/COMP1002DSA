@@ -324,6 +324,11 @@ def main():
     generator = DataGenerator(Seed) # pass the seed to data gen
     benchmark = Benchmark()
 
+    file_output.append("#"*46)
+    file_output.append("###   MODULE 4: Sorting Patients Records   ###")
+    file_output.append("#"*46)
+    file_output.append("")
+
     file_output.append("--- 1. Sample Sort Output (Size=100, Random) ---")
     sample_data = generator.GetRandom(100)
     file_output.append(f"Original (first 10): {[f'{r.duration}m' for r in sample_data[:10]]}")
